@@ -1,12 +1,24 @@
 import express from 'express';
+import dotenv from "dotenv";
+import cors from "cors";
+
+import spaceRoutes from './routes/space.routes';
+
+dotenv.config();
+const PORT = process.env.PORT || 3001;
 
 const app = express();
-const PORT = 3000;
+app.use(express.json());
+app.use(cors());
 
-app.get('/', (_req, res) => {
+//space routes
+app.use("/space", spaceRoutes);
+
+app.get('/', (req, res) => {
   res.send('Welcome to the lobby!!');
 });
 
+//APP LISTEN
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
