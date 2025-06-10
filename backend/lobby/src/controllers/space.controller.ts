@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { copyB2Folder } from './b2.controller';
 
 const createNewSpace = async (req: Request, res: Response): Promise<void> => {
     // console.log("req came");
@@ -11,8 +12,8 @@ const createNewSpace = async (req: Request, res: Response): Promise<void> => {
             return;
         }
         
-        const result="success";
-        // const result = await copyB2Folder(`base/${language}`, `spaces/${spaceId}`);
+        // const result="success";
+        const result = await copyB2Folder(`base/${language}`, `spaces/${spaceId}`);
 
         if (result === "success") {
             res.status(200).json({ message: "Project created" });

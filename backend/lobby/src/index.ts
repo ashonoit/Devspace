@@ -2,9 +2,10 @@ import express from 'express';
 import dotenv from "dotenv";
 import cors from "cors";
 
+dotenv.config();
+
 import spaceRoutes from './routes/space.routes';
 
-dotenv.config();
 const PORT = process.env.PORT || 3001;
 
 const app = express();
