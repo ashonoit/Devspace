@@ -1,0 +1,1 @@
+export const SELF_DESTRUCT_TIME = 5*60*1000;
