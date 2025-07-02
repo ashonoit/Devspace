@@ -5,7 +5,10 @@ export const Output = () => {
     const spaceId = searchParams.get('spaceId') ?? '';
     const INSTANCE_URI = `ws://localhost:3003`;
 
-    return <div style={{height: "40vh", background: "white"}}>
-        <iframe width={"100%"} height={"100%"} src={`${INSTANCE_URI}`} />
-    </div>
+    return (
+        <iframe 
+            className="w-full h-full border-none"
+            src={`${INSTANCE_URI}`} 
+        />
+    );
 }

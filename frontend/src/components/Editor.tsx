@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import Sidebar from "./external/editor/components/sidebar";
 import { Code } from "./external/editor/editor/code";
-import styled from "@emotion/styled";
 import { File, buildFileTree, RemoteFile } from "./external/editor/utils/file-manager";
 import { FileTree } from "./external/editor/components/file-tree";
 import { Socket } from "socket.io-client";
@@ -17,6 +16,7 @@ export const Editor = ({
     selectedFile: File | undefined;
     socket: Socket;
 }) => {
+  
   const rootDir = useMemo(() => {
     return buildFileTree(files);
   }, [files]);
@@ -29,7 +29,7 @@ export const Editor = ({
 
   return (
     <div>
-      <Main>
+      <div className="flex">
         <Sidebar>
           <FileTree
             rootDir={rootDir}
@@ -38,11 +38,7 @@ export const Editor = ({
           />
         </Sidebar>
         <Code socket={socket} selectedFile={selectedFile} />
-      </Main>
+      </div>
     </div>
   );
 };
-
-const Main = styled.main`
-  display: flex;
-`;
