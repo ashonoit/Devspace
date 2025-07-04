@@ -13,6 +13,7 @@
     "@emotion/styled": "^11.14.1",
     "@monaco-editor/react": "^4.7.0",
     "@radix-ui/react-label": "^2.1.7",
+    "@react-oauth/google": "^0.12.2",
     "@splinetool/react-spline": "^4.0.0",
     "@tabler/icons-react": "^3.34.0",
     "@tailwindcss/vite": "^4.1.11",

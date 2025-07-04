@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { TVAdoor, Navbar } from "./contents";
+import {  Navbar } from "./contents";
 
 
 export default function LandingLayout(){
@@ -7,9 +7,9 @@ export default function LandingLayout(){
         <div className="relative pointer-events-none w-screen h-screen overflow-hidden bg-black text-white">
             {/* Spline as full screen background */}
 
-            <div className="absolute inset-0 z-10 pointer-events-auto">
+            {/* <div className="absolute inset-0 z-10 pointer-events-auto">
                 <TVAdoor/>
-            </div>
+            </div> */}
 
             {/* Navbar (always on top) */}
 
