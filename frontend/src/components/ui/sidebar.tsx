@@ -2,7 +2,7 @@
 import { cn } from "../../lib/utils";
 import React, { useState, createContext, useContext } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { Menu, X,Pin, PinOff } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { SIDEMENU_BG, SIDEMENU_HOVER_LINK_BG } from "../../lib/constants";
 
 interface Links {

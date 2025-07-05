@@ -28,7 +28,7 @@ const useGoogleAuth = () : IUseGoogleAuthResult =>{
             
             console.log('User authenticated using Google auth');
             console.log(user);
-            navigate('/dashboard'); 
+            navigate('/console'); 
         }catch(err:any){
             console.error('Google auth error:', err);
             setError('Failed to authenticate with Google');

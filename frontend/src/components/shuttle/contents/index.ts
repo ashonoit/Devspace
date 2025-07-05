@@ -1,4 +1,5 @@
-import Dashboard from "./dashboard/Dashboard";
+import Console from "./console/Console";
 import Profile from "./profile/Profile";
+import { BGeffect } from "./BGeffect";
 
-export {Dashboard, Profile};
+export {Console, Profile, BGeffect};

@@ -7,7 +7,7 @@ import { Landing } from './components/Landing';
 import LandingLayout from './components/launch/LandingLayout';
 import ShuttleLayout from './components/shuttle/ShuttleLayout';
 import { LandingContent, SignIn, SignUp } from './components/launch/contents';
-import { Dashboard, Profile } from './components/shuttle/contents';
+import { Console,Profile } from './components/shuttle/contents';
 
 
 function App() {
@@ -27,8 +27,8 @@ function App() {
           {/* Private routes:- */}
 
           <Route element={<ShuttleLayout />}>
-            <Route path="/dashboard" element={isAuth ? <Dashboard /> : <Navigate to={"/signin"}/>} />
-            <Route path="/profile" element={isAuth ? <Profile /> : <Navigate to={"/profile"}/>} />
+            <Route path="/console" element={isAuth ? <Console /> : <Navigate to={"/signin"}/>} />
+            <Route path="/profile" element={isAuth ? <Profile /> : <Navigate to={"/signin"}/>} />
 
           </Route>
 

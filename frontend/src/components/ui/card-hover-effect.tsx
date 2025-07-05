@@ -2,7 +2,7 @@ import { cn } from "../../lib/utils";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 
-import { CARD_BG,HOVER_CARD_BG, CARD_BORDER_AND_BORDER} from "../../lib/constants";
+import { CARD_BG,HOVER_CARD_BG, CARD_BORDER_AND_HOVER_BORDER} from "../../lib/constants";
 
 export const HoverEffect = ({
   items,
@@ -20,7 +20,7 @@ export const HoverEffect = ({
   return (
     <div
       className={cn(
-        "flex overflow-x-auto gap-4 py-10 px-4 snap-x snap-mandatory","scrollbar-hide",
+        "flex overflow-x-auto gap-4 py-1 px-4 snap-x snap-mandatory","scrollbar-hide",
         className
       )}
     >
@@ -28,7 +28,7 @@ export const HoverEffect = ({
         <a
           href={item?.link}
           key={item?.link}
-          className="snap-start relative group  block p-2 w-[300px] shrink-0"
+          className="snap-start relative group  block p-2 h-[150px] w-[150px] shrink-0"
           onMouseEnter={() => setHoveredIndex(idx)}
           onMouseLeave={() => setHoveredIndex(null)}
         >
@@ -49,15 +49,43 @@ export const HoverEffect = ({
               />
             )}
           </AnimatePresence>
-          <Card>
+          {/* <Card>
             <CardTitle>{item.title}</CardTitle>
             <CardDescription>{item.description}</CardDescription>
-          </Card>
+          </Card> */}
+          <Card2 title={item.title} stackName={item.description}/>
         </a>
       ))}
     </div>
   );
 };
+
+export function Card2({
+  title,
+  stackName,
+}: {
+  title: string;
+  stackName: string;
+}) {
+  return (
+    <div className={cn(
+        "rounded-2xl h-full w-full overflow-hidden relative z-20 border", CARD_BG,CARD_BORDER_AND_HOVER_BORDER,
+      )}>
+      <div className="relative flex items-center justify-center h-1/3 bg-zinc-800">
+        {/* Line */}
+        <div className="absolute  bottom-0 left-0 w-full h-px bg-white/20 z-0" />
+
+        {/* Icon with background to hide the line behind */}
+        {/* <div className={cn("z-10 text-zinc-900 dark:text-zinc-100 bg-neutral-950 px-2 text-xl font-semibold", CARD_BG)}>@</div> */}
+      </div>
+
+      <div className="flex flex-col items-start px-2">
+        <div className="text-lg font-medium text-white">{title}</div>
+        <div className="text-xs mt-1 text-white/50">{stackName}</div>
+      </div>
+    </div>
+  );
+}
 
 export const Card = ({
   className,
@@ -69,7 +97,7 @@ export const Card = ({
   return (
     <div
       className={cn(
-        "rounded-2xl h-full w-full p-4 overflow-hidden relative z-20 border", CARD_BG,CARD_BORDER_AND_BORDER,
+        "rounded-2xl h-full w-full p-1 overflow-hidden relative z-20 border", CARD_BG,CARD_BORDER_AND_HOVER_BORDER,
         className
       )}
     >
@@ -87,7 +115,7 @@ export const CardTitle = ({
   children: React.ReactNode;
 }) => {
   return (
-    <h4 className={cn("text-zinc-100 font-bold tracking-wide mt-4", className)}>
+    <h4 className={cn("text-zinc-900 dark:text-zinc-100 font-bold tracking-wide", className)}>
       {children}
     </h4>
   );
@@ -102,7 +130,7 @@ export const CardDescription = ({
   return (
     <p
       className={cn(
-        "mt-8 text-zinc-400 tracking-wide leading-relaxed text-sm",
+        " text-zinc-400 tracking-wide leading-relaxed text-sm",
         className
       )}
     >
