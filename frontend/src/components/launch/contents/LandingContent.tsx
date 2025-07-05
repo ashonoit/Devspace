@@ -7,7 +7,7 @@ const LandingContent = () => {
             {/* Left column - Title */}
             <div className="flex flex-col justify-center items-start text-left space-y-4 w-full md:w-1/2">
               <h1 className="text-6xl md:text-8xl font-bold text-black dark:text-white">
-                Code-Space
+                Namespace
               </h1>
               <p className="text-xl text-gray-600 dark:text-gray-300">
                 Jump stacks. Like jumping timelines.
@@ -17,7 +17,7 @@ const LandingContent = () => {
             {/* Right column - Quote */}
             <div className="flex flex-col justify-center items-end text-right space-y-4 w-full md:w-1/2">
               <blockquote className="text-xl italic text-gray-700 dark:text-gray-300 max-w-md">
-                Code-Space gives you your own live coding environment, instantly spun up for any tech stack. Explore what others are building, share your own spaces, and code without setup hassles.
+                Namespace gives you your own live coding environment, instantly spun up for any tech stack. Explore what others are building, share your own spaces, and code without setup hassles.
               </blockquote>
               {/* <p className="text-sm text-gray-500 dark:text-gray-400">– xyz</p> */}
             </div>

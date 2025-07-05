@@ -28,7 +28,7 @@ export function SignupForm() {
   return (
     <div className=" shadow-stone-800 shadow-2xl mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-stone-950">
       <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-200">
-        Welcome to Code-Space
+        Welcome to Namespace
       </h2>
       <p className="mt-2 max-w-sm text-sm text-neutral-600 dark:text-neutral-300">
         Sign Up with us pleaseeeee, it doesn't take much time
