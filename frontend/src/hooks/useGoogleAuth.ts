@@ -1,7 +1,9 @@
-import axios from "axios";
+
 import { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
+import { useAppDispatch } from "../redux/reduxTypeSafety";
+import { signinWithGoogle } from "../redux/slices/authSlice";
 
 interface IUseGoogleAuthResult {
     loginWithGoogle: ()=>void;
@@ -12,22 +14,20 @@ interface IUseGoogleAuthResult {
 
 
 const useGoogleAuth = () : IUseGoogleAuthResult =>{
-
+    const dispatch = useAppDispatch();
     const navigate =useNavigate();
     const [loading,setLoading] = useState(false);
     const [error,setError] = useState<string | null>(null);
 
-    const sendTokenToBackend = async (code:string) =>{
+    const sendTokenToRedux = async (code:string) =>{
         setLoading(true);
         setError(null);
 
         try{
-            const res = await axios.post(`${import.meta.env.VITE_SERVER_URI!}/auth/viaGoogle`,{code});
+            const result = await dispatch(signinWithGoogle({ code })).unwrap();
             
-            const {user}=res.data;
-            
-            console.log('User authenticated using Google auth');
-            console.log(user);
+            console.log("User authenticated using Google auth:", result);
+
             navigate('/console'); 
         }catch(err:any){
             console.error('Google auth error:', err);
@@ -43,7 +43,7 @@ const useGoogleAuth = () : IUseGoogleAuthResult =>{
         onSuccess: async (tokenResponse) => {
           if (tokenResponse.code) {
             // console.log(tokenResponse.code)
-            await sendTokenToBackend(tokenResponse.code); // for ID token (popup)
+            await sendTokenToRedux(tokenResponse.code); // for ID token (popup)
           } else {
             setError('No authorization code received');
           }

@@ -36,6 +36,7 @@ export function OwnedNamespaceCard() {
         <button className="relative cursor-pointer inline-flex h-9 items-center justify-center rounded-full px-4 text-sm font-medium text-zinc-800 transition-all duration-300 hover:bg-gradient-to-r hover:from-zinc-600 hover:to-zinc-700 hover:text-white  dark:bg-zinc-300   focus:outline-none">
           Resume
         </button>
+      
 
 
       </div>

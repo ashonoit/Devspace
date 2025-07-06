@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { useState } from "react";
 import { Label } from "../../ui/label";
 import { Input } from "../../ui/input";
 import { cn } from "../../../lib/utils";
@@ -8,6 +9,8 @@ import { cn } from "../../../lib/utils";
 // } from "@tabler/icons-react";
 
 import useGoogleAuth from "../../../hooks/useGoogleAuth";
+import { useAppDispatch } from "../../../redux/reduxTypeSafety";
+import { signin } from "../../../redux/slices/authSlice";
 
 export function SignIn(){
   return (
@@ -18,11 +21,25 @@ export function SignIn(){
 }
 
 export function SigninForm() {
-  const { loginWithGoogle, loading, error } = useGoogleAuth();
+  const dispatch = useAppDispatch()
+  const { loginWithGoogle, loading, error } = useGoogleAuth()
+
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Form submitted");
-  };
+      e.preventDefault()
+
+      if(!username || !password){
+        alert("Fields are empty")
+        return;
+      }
+  
+      dispatch(signin({ username, password }))
+  }
+
+
   return (
     <div className=" shadow-stone-800 shadow-2xl mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-stone-950">
       <h2 className="text-xl font-bold text-neutral-800 dark:text-neutral-200">
@@ -35,8 +52,8 @@ export function SigninForm() {
       <form className="my-8" onSubmit={handleSubmit}>
         <div className="mb-4 flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2">
           <LabelInputContainer>
-            <Label htmlFor="lastname">Username</Label>
-            <Input id="lastname" placeholder="it was 'maru' right?" type="text" />
+            <Label htmlFor="username">Username</Label>
+            <Input onChange={(e) => setUsername(e.target.value)} id="username" placeholder="it was 'maru' right?" type="text" />
           </LabelInputContainer>
         </div>
         {/* <LabelInputContainer className="mb-4">
@@ -45,7 +62,7 @@ export function SigninForm() {
         </LabelInputContainer> */}
         <LabelInputContainer className="mb-4">
           <Label htmlFor="password">Password</Label>
-          <Input id="password" placeholder="••••••••" type="password" />
+          <Input onChange={(e) => setPassword(e.target.value)} id="password" placeholder="••••••••" type="password" />
         </LabelInputContainer>
         
 
@@ -61,7 +78,10 @@ export function SigninForm() {
 
         <div className="flex flex-col space-y-4">
           <button
-            onClick={()=>loginWithGoogle()}
+            onClick={(e)=>{
+              e.preventDefault();
+              loginWithGoogle()
+            }}
             disabled={loading} 
             className="group/btn shadow-input relative flex h-10 w-full items-center justify-start space-x-2 rounded-md bg-gray-50 px-4 font-medium text-black dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_#262626]"
             type="submit"

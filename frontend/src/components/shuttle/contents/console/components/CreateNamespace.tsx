@@ -1,4 +1,11 @@
 import { RocketIcon } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../../../../components/ui/select"
 
 export function CreateNamespace() {
   return (
@@ -20,13 +27,10 @@ export function CreateNamespace() {
             <div className="flex flex-row gap-2">
                 <input
                   placeholder="UniqueTitle..."
-                  className="flex-1 min-w-[140px] rounded-xl bg-zinc-100 dark:bg-zinc-900 text-sm text-zinc-900 dark:text-zinc-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-zinc-300 dark:focus:ring-zinc-600 border border-zinc-300 dark:border-zinc-700"
+                  className="flex-1 min-w-[180px] rounded-xl bg-zinc-100 dark:bg-zinc-900 text-sm text-zinc-900 dark:text-zinc-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-zinc-300 dark:focus:ring-zinc-600 border border-zinc-300 dark:border-zinc-700"
                   />
-                <select className="min-w-[100px] rounded-xl bg-zinc-100 dark:bg-zinc-800 text-sm text-zinc-900 dark:text-zinc-200 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-zinc-300 dark:focus:ring-zinc-600 dark:focus:bg-zinc-900 border border-zinc-300 dark:border-zinc-700">
-                  <option>Choose stack</option>
-                  <option>NodeJS</option>
-                  <option>C++</option>
-                </select>
+                  <StackSelect/>
+                
             </div>
 
             {/* <button className="flex items-center gap-2 rounded-md bg-yellow-500 hover:bg-yellow-400 text-zinc-900 px-4 py-2 font-medium text-sm transition duration-150 ease-in-out">
@@ -44,4 +48,21 @@ export function CreateNamespace() {
         </div>
     </div>
   );
+}
+
+function StackSelect(){
+  return (
+    <Select>
+      <SelectTrigger className="w-[130px] rounded-xl bg-zinc-800 border-zinc-700 dark:text-zinc-300 text-zinc-800 focus:bg-zinc-900 ">
+        <SelectValue placeholder="Stack" />
+      </SelectTrigger>
+      <SelectContent className=" bg-zinc-800 shadow-xl shadow-zinc-900 border-zinc-700 dark:text-zinc-300 text-zinc-800">
+        <SelectItem className="hover:bg-zinc-700/50 rounded-md cursor-pointer" value="nodejs">NodeJs</SelectItem>
+        <SelectItem className="hover:bg-zinc-700/50 rounded-md cursor-pointer " value="c++">C++</SelectItem>
+        <SelectItem className="hover:bg-zinc-700/50 rounded-md cursor-pointer" value="python">Python</SelectItem>
+        <SelectItem className="hover:bg-zinc-700/50 rounded-md cursor-pointer" value="ruby">Ruby</SelectItem>
+       
+      </SelectContent>
+    </Select>
+  )
 }

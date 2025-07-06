@@ -3,6 +3,7 @@ import { SideMenu } from "./contents/SideMenu";
 import { cn } from "../../lib/utils";
 import { DARK_CONTENT_BG } from "../../lib/constants";
 import { BGeffect } from "./contents";
+import { Tools } from "./contents/Tools";
 
 export default function ShuttleLayout(){
     return (
@@ -15,8 +16,12 @@ export default function ShuttleLayout(){
                 <SideMenu/>
             </div>
 
-            <div>
+            <div className="">
                 <BGeffect/>
+            </div>
+
+            <div>
+                <Tools/>
             </div>
             
             <Outlet/>

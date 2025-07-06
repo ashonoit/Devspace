@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { useState } from "react";
 import { Label } from "../../ui/label";
 import { Input } from "../../ui/input";
 import { cn } from "../../../lib/utils";
@@ -9,6 +10,8 @@ import { cn } from "../../../lib/utils";
 // } from "@tabler/icons-react";
 
 import useGoogleAuth from "../../../hooks/useGoogleAuth";
+import { useAppDispatch } from "../../../redux/reduxTypeSafety";
+import { signup } from "../../../redux/slices/authSlice";
 
 export function SignUp(){
   return (
@@ -19,11 +22,26 @@ export function SignUp(){
 }
 
 export function SignupForm() {
-  const { loginWithGoogle, loading, error } = useGoogleAuth();
+  const dispatch = useAppDispatch()
+  const { loginWithGoogle, loading, error } = useGoogleAuth()
+
+  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [repeatPassword, setRepeatPassword] = useState("")
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Form submitted");
-  };
+    e.preventDefault()
+
+    if (password !== repeatPassword) {
+      alert("Passwords do not match")
+      return
+    }
+
+    dispatch(signup({ username, email, password }))
+  }
+
+  
 
   return (
     <div className=" shadow-stone-800 shadow-2xl mx-auto w-full max-w-md rounded-none bg-white p-4 md:rounded-2xl md:p-8 dark:bg-stone-950">
@@ -41,21 +59,25 @@ export function SignupForm() {
             <Input id="tname" placeholder="Martand Dhamdere" type="text" />
           </LabelInputContainer> */}
           <LabelInputContainer>
-            <Label htmlFor="lastname">Username</Label>
-            <Input id="lastname" placeholder="maru" type="text" />
+            <Label htmlFor="username">Username</Label>
+            <Input onChange={(e) => setUsername(e.target.value)} id="username" value={username} placeholder="maru" type="text" />
           </LabelInputContainer>
         </div>
+
         <LabelInputContainer className="mb-4">
           <Label htmlFor="email">Email Address</Label>
-          <Input id="email" placeholder="maru@dhol.com" type="email" />
+          <Input onChange={(e) => setEmail(e.target.value)} id="email" placeholder="maru@dhol.com" type="email" />
         </LabelInputContainer>
+
         <LabelInputContainer className="mb-4">
           <Label htmlFor="password">Password</Label>
-          <Input id="password" placeholder="••••••••" type="password" />
+          <Input onChange={(e) => setPassword(e.target.value)} id="password" placeholder="••••••••" type="password" />
         </LabelInputContainer>
+
         <LabelInputContainer className="mb-8">
           <Label htmlFor="repeatpassword">Repeat Password</Label>
           <Input
+            onChange={(e) => setRepeatPassword(e.target.value)}
             id="repeatpassword"
             placeholder="••••••••"
             type="repeatpassword"

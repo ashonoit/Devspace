@@ -15,15 +15,16 @@ declare module "express-serve-static-core" {
   }
 }
 
-export const authenticate = (req: Request, res: Response, next: NextFunction) => {
+export const authenticate = (req: Request, res: Response, next: NextFunction):void => {
   try {
-    const token = req.cookies.accessToken;
+    const token = req.cookies?.accessToken;
 
     if (!token) {
-      return res.status(401).json({
+      res.status(401).json({
         success: false,
         message: "Access denied. No token provided.",
       });
+      return;
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
@@ -32,7 +33,7 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
     next();
   } catch (err) {
     console.error("Auth middleware error:", err);
-    return res.status(401).json({
+    res.status(401).json({
       success: false,
       message: "Invalid or expired token.",
     });

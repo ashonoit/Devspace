@@ -80,7 +80,6 @@ const SignIn = async (req:Request, res:Response): Promise<void> =>{
 
         const cookieOptions = {
             httpOnly: true,
-            secure: true,
             maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days
         }
 
@@ -171,8 +170,9 @@ const SignInWithGoogle = async (req:Request, res:Response): Promise<void> =>{
 
       // 5. Set cookie
       const cookieOptions = {
-        httpOnly: true,
-        secure: true,
+        httpOnly:false,
+        secure:false,
+        sameSite: "lax" as const,
         maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days
       };
 
@@ -193,5 +193,23 @@ const SignInWithGoogle = async (req:Request, res:Response): Promise<void> =>{
     }
 }
 
-export {SignIn, SignUp, SignInWithGoogle}
+const FetchMe = async (req:Request, res:Response):Promise<void> =>{
+    try{
+      const user = req.user;  //{id,email,username}
+      if(!user){
+        console.log("No user found in FetchMe");
+        return;
+      }
+
+      // console.log("user reloaded")
+
+      res.status(200).json({success:true, message:"Here are your details", user});
+    }
+    catch(err:any){
+      console.error("Unable to FetchMe() :", err.response?.data || err.message);
+      res.status(500).json({ success: false, message: "Error in fetching your details" });
+    }
+}
+
+export {SignIn, SignUp, SignInWithGoogle, FetchMe}
 

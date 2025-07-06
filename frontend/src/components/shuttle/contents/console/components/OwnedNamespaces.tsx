@@ -1,4 +1,4 @@
-import { OwnedNamespaceCard } from "./OwnedNameSpaceCard";
+import { OwnedNamespaceCard } from "./OwnedNamespaceCard";
 
 export function OwnedNamespaces() {
   return (
