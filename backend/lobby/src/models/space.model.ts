@@ -21,7 +21,7 @@ const SpaceSchema = new mongoose.Schema({
     required: true,
     unique: true
   },
-  caption: {
+  desc: {
     type: String
   },
   language: {

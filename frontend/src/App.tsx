@@ -25,9 +25,9 @@ function App() {
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);   //to actually manipulate DOM
 
-  useEffect(()=>{
-    dispatch(loadUser());
-  },[])
+  // useEffect(()=>{
+  //   dispatch(loadUser());
+  // },[])
 
 //   const authLoading = useAppSelector(state => state.auth.loading);
 //   const isAuthenticated = useAppSelector(state => state.auth.authenticated);
@@ -65,6 +65,8 @@ function App() {
               <Route path="/console" element={<Console />} />
               <Route path="/profile" element={<Profile />} />
             </Route>
+
+            <Route path="/namespace/:spaceId" element={<CodingPage />} />
           </Route>
 
           <Route path="/coding" element={<CodingPage />} />

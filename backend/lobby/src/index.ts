@@ -24,7 +24,7 @@ app.use(cors(
 ));
 
 //space routes
-app.use("/api/space", spaceRoutes);
+app.use("/api/namespace", spaceRoutes);
 app.use("/api/auth", authRoutes);
 
 //auth routes

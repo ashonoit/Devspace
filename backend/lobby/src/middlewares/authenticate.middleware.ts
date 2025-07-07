@@ -20,6 +20,8 @@ export const authenticate = (req: Request, res: Response, next: NextFunction):vo
     const token = req.cookies?.accessToken;
 
     if (!token) {
+      console.log("Illegal try")
+      
       res.status(401).json({
         success: false,
         message: "Access denied. No token provided.",

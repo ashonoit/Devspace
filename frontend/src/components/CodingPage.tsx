@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Socket, io } from 'socket.io-client';
 import { Editor } from './Editor';
 import { File, RemoteFile, Type } from './external/editor/utils/file-manager';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useParams } from 'react-router-dom';
 import { Output } from './Output';
 import { TerminalComponent as Terminal } from './Terminal';
 import axios from 'axios'; 
@@ -29,8 +29,9 @@ function useSocket(spaceId: string): Socket | null {
 
 export const CodingPage = () => {
     const [podCreated, setPodCreated] = useState(false);
-    const [searchParams] = useSearchParams();
-    const spaceId = searchParams.get('spaceId') ?? '';
+    // const [searchParams] = useSearchParams();
+    // const spaceId = searchParams.get('spaceId') ?? '';
+    const { spaceId } = useParams<{ spaceId: string }>();
     
     useEffect(() => {
         if (spaceId) {
@@ -50,10 +51,12 @@ export const CodingPage = () => {
 }
 
 export const CodingPagePostPodCreation = () => {
-    const [searchParams] = useSearchParams();
-    const spaceId = searchParams.get('spaceId') ?? '';
+    // const [searchParams] = useSearchParams();
+    // const spaceId = searchParams.get('spaceId') ?? '';
+    const { spaceId } = useParams<{ spaceId: string }>();
+
     const [loaded, setLoaded] = useState(false);
-    const socket = useSocket(spaceId);
+    const socket = useSocket(spaceId!);
     const [fileStructure, setFileStructure] = useState<RemoteFile[]>([]);
     const [selectedFile, setSelectedFile] = useState<File | undefined>(undefined);
     const [showOutput, setShowOutput] = useState(false);
@@ -115,7 +118,7 @@ export const CodingPagePostPodCreation = () => {
             <div className={`${showOutput ? "h-[40vh]" : "h-0"} overflow-hidden transition-all duration-200`}>
               {showOutput && <Output />}
             </div>
-            <div className="flex-1 overflow-auto">
+            <div className="flex-1 overflow-auto bg-black">
               <Terminal socket={socket} />
             </div>
           </div>

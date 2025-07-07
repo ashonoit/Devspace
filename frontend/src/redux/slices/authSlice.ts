@@ -75,7 +75,7 @@ export const signinWithGoogle = createAsyncThunk("auth/signinWithGoogle",
 // Sign out
 export const signout = createAsyncThunk(`auth/signout`, async (_, thunkAPI) => {
   try {
-    await axios.post(`${import.meta.env.VITE_SERVER_URI!}/api/auth/signout`, {withCredentials:true})
+    await axios.post(`${import.meta.env.VITE_SERVER_URI!}/api/auth/signout`,{}, {withCredentials:true})
     return null
   } catch (err: any) {
     return thunkAPI.rejectWithValue("Signout failed")
@@ -117,6 +117,7 @@ const authSlice = createSlice({
           state.loading = false
           state.user = action.payload
           state.authenticated=false
+          
         })
         .addCase(signup.rejected, (state, action) => {
           state.loading = false

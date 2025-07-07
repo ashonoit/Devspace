@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Label } from "../../ui/label";
 import { Input } from "../../ui/input";
 import { cn } from "../../../lib/utils";
@@ -24,6 +25,7 @@ export function SignUp(){
 export function SignupForm() {
   const dispatch = useAppDispatch()
   const { loginWithGoogle, loading, error } = useGoogleAuth()
+  const navigate =useNavigate();
 
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
@@ -33,12 +35,18 @@ export function SignupForm() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
+    if(!username || !email || !password || !repeatPassword){
+      alert("All fields are necessary");
+      return;
+    }
+
     if (password !== repeatPassword) {
       alert("Passwords do not match")
       return
     }
 
     dispatch(signup({ username, email, password }))
+    navigate('/signin')
   }
 
   

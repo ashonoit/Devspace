@@ -10,22 +10,26 @@ const SignUp = async (req:Request, res:Response):Promise<void>=>{
 
         if ([email, username, password].some((field) => field?.trim() === "")) {
             res.status(400).json({message: "All fields must be filled", success:false});
+            return;
         }
 
         if(username.length<3 || username.length>25){
             res.status(400).json({message: "Username should be of [3,25] letters!", success:false}); 
+            return;
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-		if (!emailRegex.test(email) || email.length>50) {
-			res.status(400).json({ message: "Invalid email format", success:false });
-		}
+		    if (!emailRegex.test(email) || email.length>50) {
+		    	res.status(400).json({ message: "Invalid email format", success:false });
+          return;
+		    }
 
         const user =await User.findOne({
             $or: [{email},{username}]
         });
         if(user){
             res.status(409).json({ success: false, message: "Email or username already exists!" });
+            return;
         }
 
         const salt =  await bcrypt.genSalt(10);
@@ -34,13 +38,13 @@ const SignUp = async (req:Request, res:Response):Promise<void>=>{
         const newUser = new User({ username, email, passHash, loginVia:'manual'});
         await newUser.save();
 
-
+        console.log(newUser?.username, " just signed up")
 
         res.status(201)
                   .json({success:true, message: "User created successfully." });
     }
     catch(err){
-        console.log("Error in SignIn : ",err);
+        console.log("Error in SignUp : ",err);
         res.status(500).json({success:true, message: "Failed to Sign Up"});
     }
 }
@@ -82,6 +86,8 @@ const SignIn = async (req:Request, res:Response): Promise<void> =>{
             httpOnly: true,
             maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days
         }
+
+        console.log(user.username, " signed in")
 
         res.status(200)
         .cookie("accessToken", token, cookieOptions)
@@ -170,11 +176,13 @@ const SignInWithGoogle = async (req:Request, res:Response): Promise<void> =>{
 
       // 5. Set cookie
       const cookieOptions = {
-        httpOnly:false,
+        httpOnly:true,
         secure:false,
         sameSite: "lax" as const,
         maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days
       };
+
+      console.log("Google logged in", user.username)
 
       res.cookie("accessToken", token, cookieOptions)
         .status(200)
@@ -201,7 +209,7 @@ const FetchMe = async (req:Request, res:Response):Promise<void> =>{
         return;
       }
 
-      // console.log("user reloaded")
+      console.log("User reloaded")
 
       res.status(200).json({success:true, message:"Here are your details", user});
     }
@@ -211,5 +219,23 @@ const FetchMe = async (req:Request, res:Response):Promise<void> =>{
     }
 }
 
-export {SignIn, SignUp, SignInWithGoogle, FetchMe}
+const SignOut = async (req: Request, res: Response): Promise<void> => {
+  try {
+
+    console.log("User signed out")
+    // Clear the accessToken cookie
+    res.clearCookie("accessToken", {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: false, // set to true if using HTTPS
+    });
+
+    res.status(200).json({ success: true, message: "Logged out successfully" });
+  } catch (err: any) {
+    console.error("Signout error:", err.message || err);
+    res.status(500).json({ success: false, message: "Logout failed" });
+  }
+};
+
+export {SignIn, SignUp, SignInWithGoogle, FetchMe, SignOut}
 

@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { useState } from "react";
+import { useState, } from "react";
 import { Label } from "../../ui/label";
 import { Input } from "../../ui/input";
 import { cn } from "../../../lib/utils";
@@ -11,6 +11,7 @@ import { cn } from "../../../lib/utils";
 import useGoogleAuth from "../../../hooks/useGoogleAuth";
 import { useAppDispatch } from "../../../redux/reduxTypeSafety";
 import { signin } from "../../../redux/slices/authSlice";
+import { useNavigate } from "react-router-dom";
 
 export function SignIn(){
   return (
@@ -23,20 +24,30 @@ export function SignIn(){
 export function SigninForm() {
   const dispatch = useAppDispatch()
   const { loginWithGoogle, loading, error } = useGoogleAuth()
+  const navigate = useNavigate();
 
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
 
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault()
 
       if(!username || !password){
         alert("Fields are empty")
         return;
       }
-  
-      dispatch(signin({ username, password }))
+
+      try {
+        await dispatch(signin({ username, password })).unwrap();
+        // Only runs if sign-in was successful
+        console.log("Signed in");
+        navigate("/console");
+      } catch (err) {
+        // Optional: show error
+        console.error("Sign in failed:", err);
+        alert("Sign in failed");
+      }
   }
 
 

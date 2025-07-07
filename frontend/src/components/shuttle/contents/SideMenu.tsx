@@ -3,8 +3,21 @@ import React, { useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink, useSidebar } from "../../ui/sidebar";
 import {LogOut, Settings, SquareTerminal, User, Pin, PinOff  } from "lucide-react"
 import { motion } from "motion/react";
+import { useAppDispatch } from "../../../redux/reduxTypeSafety";
+import { signout } from "../../../redux/slices/authSlice";
+import { useNavigate } from "react-router-dom";
 
 export function SideMenu() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    alert("Signing out");
+    dispatch(signout());
+    console.log("signed out")
+    navigate("/signin");
+  };
+
   const links = [
     {
       label: "Console",
@@ -28,10 +41,16 @@ export function SideMenu() {
       ),
     },
     {
-      label: "Logout",
+      label: "Sign Out",
       href: "#",
       icon: (
-        <LogOut className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" />
+        <LogOut 
+            onClick={(e)=> {
+              e.preventDefault() // stop href from triggering
+              handleLogout();
+            }} 
+            className="h-5 w-5 shrink-0 text-neutral-700 dark:text-neutral-200" 
+        />
       ),
     },
   ];
