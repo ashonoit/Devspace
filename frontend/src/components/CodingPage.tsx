@@ -7,24 +7,26 @@ import { Output } from './Output';
 import { TerminalComponent as Terminal } from './Terminal';
 import axios from 'axios'; 
 
-function useSocket(spaceId: string): Socket | null {
-    const [socket, setSocket] = useState<Socket | null>(null);
+import { useSocket } from '../hooks/useSocket';
 
-    useEffect(() => {
-        if (!spaceId) return;
+// function useSocket(spaceId: string): Socket | null {
+//     const [socket, setSocket] = useState<Socket | null>(null);
 
-        const newSocket = io(`ws://localhost:3001`,{
-            auth: { spaceId }
-        });
-        setSocket(newSocket);
+//     useEffect(() => {
+//         if (!spaceId) return;
 
-        return () => {
-            newSocket.disconnect();
-        };
-    }, [spaceId]);
+//         const newSocket = io(`ws://localhost:3001`,{
+//             auth: { spaceId }
+//         });
+//         setSocket(newSocket);
 
-    return socket;
-}
+//         return () => {
+//             newSocket.disconnect();
+//         };
+//     }, [spaceId]);
+
+//     return socket;
+// }
 
 
 export const CodingPage = () => {
@@ -62,7 +64,7 @@ export const CodingPagePostPodCreation = () => {
     const [showOutput, setShowOutput] = useState(false);
 
     useEffect(() => {
-        console.log("Socket initialized:", socket);
+        console.log("Socket initialized:");
         
         if (socket) {
             socket.on('connect_error', (err:Error) => {
@@ -72,6 +74,9 @@ export const CodingPagePostPodCreation = () => {
             socket.on('loaded', ({ rootContent }: { rootContent: RemoteFile[] }) => {
                 setLoaded(true);
                 setFileStructure(rootContent);
+
+                console.log("rootContent:-")
+                console.log(rootContent)
             });
         }
     }, [socket]);

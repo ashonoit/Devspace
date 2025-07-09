@@ -12,7 +12,9 @@ import { LandingContent, SignIn, SignUp } from './components/launch/contents';
 import { Console,Profile } from './components/shuttle/contents';
 
 import { useAppSelector, useAppDispatch} from './redux/reduxTypeSafety';
-import { loadUser } from './redux/slices/authSlice';
+import NamespaceLayout from './components/namespace/NamespaceLayout';
+import { LoadCodingPage } from './components/namespace/contents/LoadCodingPage';
+
 
 
 
@@ -66,10 +68,10 @@ function App() {
               <Route path="/profile" element={<Profile />} />
             </Route>
 
-            <Route path="/namespace/:spaceId" element={<CodingPage />} />
+            <Route path="/namespace/:spaceId" element={<LoadCodingPage />} />
           </Route>
 
-          <Route path="/coding" element={<CodingPage />} />
+          <Route path="/coding/:spaceId" element={<CodingPage />} />
           {/* <Route path="/" element={<Landing />} /> */}
       </Routes>
     </BrowserRouter>
