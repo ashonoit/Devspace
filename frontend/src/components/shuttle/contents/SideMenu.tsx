@@ -54,11 +54,12 @@ export function SideMenu() {
       ),
     },
   ];
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
+  const [pinned,setPinned] =useState(true);
 
   return (
     
-      <Sidebar open={open} setOpen={setOpen}>
+      <Sidebar open={open} setOpen={setOpen} pinned={pinned} setPinned={setPinned}>
         <SidebarBody className="justify-between gap-10">
           <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
 

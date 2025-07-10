@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import { DARK_CONTENT_BG } from "../../lib/constants";
 // import { Tools } from "./contents/Tools";
@@ -8,7 +8,7 @@ import { ToggleProvider } from "./context/toggleContext";
 
 export default function NamespaceLayout(){
 
-
+    const { spaceId } = useParams<{ spaceId: string }>();
 
     return (
         <div 
@@ -18,7 +18,7 @@ export default function NamespaceLayout(){
         >   
             <ToggleProvider>
                 <div className="shadow-zinc-900 shadow-sm z-5">
-                    <Topbar spaceId={"nervous"}/>
+                    <Topbar spaceId={spaceId}/>
                 </div>
 
 

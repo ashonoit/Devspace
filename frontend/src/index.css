@@ -2,6 +2,8 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+
+
 @theme inline {
   --shadow-input:
     0px 2px 3px -1px rgba(0, 0, 0, 0.1),
@@ -17,5 +19,44 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+.xterm-helpers {
+  position: absolute !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+
+/* For modern browsers */
+.xterm .xterm-viewport::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.xterm .xterm-viewport::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 100, 0.4); /* Scrollbar thumb */
+  border-radius: 4px;
+}
+
+.xterm .xterm-viewport::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.xterm {
+  background-color: transparent !important;
+}
+
+.xterm .xterm-screen {
+  background-color: transparent !important;
+}
+
+.xterm-viewport {
+  background-color: transparent !important;
+}
+
+
 
 

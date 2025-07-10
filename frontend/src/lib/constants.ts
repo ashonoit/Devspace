@@ -1,4 +1,4 @@
-export const DARK_CONTENT_BG = "dark:bg-zinc-900";
+export const DARK_CONTENT_BG = "dark:bg-zinc-900 ";
 
 export const SIDEMENU_BG = "bg-neutral-100 dark:bg-zinc-800 ";
 export const SIDEMENU_HOVER_LINK_BG= "hover:bg-zinc-200 dark:hover:bg-zinc-900";

@@ -13,6 +13,8 @@ export const FileTree = (props: FileTreeProps) => {
   return <SubTree directory={props.rootDir} {...props}/>
 }
 
+
+
 interface SubTreeProps {
   directory: Directory;   // root directory
   selectedFile: File | undefined;   // currently selected file
@@ -21,7 +23,7 @@ interface SubTreeProps {
 
 const SubTree = (props: SubTreeProps) => {
   return (
-    <div>
+    <div className='text-zinc-900 dark:text-zinc-300'>
       {
         props.directory.dirs
           .sort(sortDir)
@@ -73,20 +75,31 @@ const FileDiv = ({file, icon, selectedFile, onClick}: {
   )
 }
 
-const Div = styled.div<{
+function Div({
+  depth,
+  isSelected,
+  children,
+  onClick
+}: {
   depth: number;
   isSelected: boolean;
-}>`
-  display: flex;
-  align-items: center;
-  padding-left: ${props => props.depth * 16}px;
-  background-color: ${props => props.isSelected ? "#242424" : "transparent"};
+  children: React.ReactNode;
+  onClick: ()=>void
+}) {
 
-  :hover {
-    cursor: pointer;
-    background-color: #242424;
-  }
-`
+
+  return (
+    <div
+      onClick={onClick}
+      className={`flex items-center hover:bg-neutral-200 dark:hover:bg-neutral-800 cursor-pointer ${
+        isSelected ? `bg-neutral-300 dark:bg-neutral-700` : ""
+      }`}
+      style={{ paddingLeft: `${depth * 16}px` }}
+    >
+      {children}
+    </div>
+  );
+}
 
 const DirDiv = ({directory, selectedFile, onSelect}: {
   directory: Directory;  // current directory

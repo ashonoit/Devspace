@@ -1,9 +1,11 @@
 import Editor from "@monaco-editor/react";
 import { useCodingContext } from "../context/codingContext";
+import { useAppSelector } from "../../../redux/reduxTypeSafety";
 
 export const CodeEditor = () => {
   
   const {selectedFile, socket} =useCodingContext();
+  const theme = useAppSelector(state=>state.theme.mode)
   
   if (!selectedFile || !socket) return null;
 
@@ -41,7 +43,7 @@ export const CodeEditor = () => {
       height="100vh"
       language={language}
       value={code}
-      theme="vs-dark"
+      theme={theme==="dark"?"vs-dark": "vs-light"}
       onChange={(value) => {
         debouncedHandler(value);
       }}

@@ -4,19 +4,7 @@ import { File, buildFileTree, RemoteFile } from "./files/file-manager";
 import { FileTree } from "./files/file-tree";
 import { useCodingContext } from "../context/codingContext";
 
-export const Filebar = (
-//     {
-//     files,
-//     onSelect,
-//     selectedFile,
-//     socket
-// }: {
-//     files: RemoteFile[];
-//     onSelect: (file: File) => void;
-//     selectedFile: File | undefined;
-//     socket: Socket;
-// }
-) => {
+export const Filebar = () => {
 
     const {fileStructure,selectedFile, onSelect} = useCodingContext()
     const files=fileStructure;

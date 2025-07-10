@@ -9,11 +9,12 @@ import { cn } from "../../../lib/utils";
 // } from "@tabler/icons-react";
 
 import useGoogleAuth from "../../../hooks/useGoogleAuth";
-import { useAppDispatch } from "../../../redux/reduxTypeSafety";
+import { useAppDispatch, useAppSelector } from "../../../redux/reduxTypeSafety";
 import { signin } from "../../../redux/slices/authSlice";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export function SignIn(){
+
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-100 dark:bg-stone-950 p-6">
       <SigninForm/>

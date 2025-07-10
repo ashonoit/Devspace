@@ -1,9 +1,7 @@
 import './App.css'
 import { Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { CodingPage } from './components/CodingPage'
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { Landing } from './components/Landing';
 
 import LandingLayout from './components/launch/LandingLayout';
 import ShuttleLayout from './components/shuttle/ShuttleLayout';
@@ -12,7 +10,6 @@ import { LandingContent, SignIn, SignUp } from './components/launch/contents';
 import { Console,Profile } from './components/shuttle/contents';
 
 import { useAppSelector, useAppDispatch} from './redux/reduxTypeSafety';
-import NamespaceLayout from './components/namespace/NamespaceLayout';
 import { LoadCodingPage } from './components/namespace/contents/LoadCodingPage';
 
 
@@ -71,8 +68,6 @@ function App() {
             <Route path="/namespace/:spaceId" element={<LoadCodingPage />} />
           </Route>
 
-          <Route path="/coding/:spaceId" element={<CodingPage />} />
-          {/* <Route path="/" element={<Landing />} /> */}
       </Routes>
     </BrowserRouter>
   )

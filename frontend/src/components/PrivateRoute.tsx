@@ -16,8 +16,8 @@ const PrivateRoute = () => {
 
   if (authLoading) {
     return (
-      <div className="w-screen h-screen flex flex-row items-center justify-center">
-        <h1 className="text-5xl">Nikal jaaaa...</h1>
+      <div className="w-screen h-screen bg-black flex flex-row items-center justify-center">
+        <h1 className="text-5xl text-zinc-200">Nikal jaaaa...</h1>
       </div>
     );
   }

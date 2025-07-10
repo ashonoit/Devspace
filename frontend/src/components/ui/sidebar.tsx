@@ -47,10 +47,13 @@ export const SidebarProvider = ({
   setPinned?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const [openState, setOpenState] = useState(false);
-  const [pinned, setPinned] = useState(false);
+  const [pinnedState, setPinnedState] = useState(false);
 
   const open = openProp !== undefined ? openProp : openState;
   const setOpen = setOpenProp !== undefined ? setOpenProp : setOpenState;
+  
+  const pinned = pinnedProp !== undefined ? pinnedProp : pinnedState;
+  const setPinned = setPinnedProp !== undefined ? setPinnedProp : setPinnedState;
 
   return (
     <SidebarContext.Provider value={{ open, setOpen, animate: animate, pinned, setPinned }}>
@@ -64,14 +67,18 @@ export const Sidebar = ({
   open,
   setOpen,
   animate,
+  pinned,
+  setPinned
 }: {
   children: React.ReactNode;
   open?: boolean;
   setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
   animate?: boolean;
+  pinned?:boolean;
+  setPinned?:React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   return (
-    <SidebarProvider open={open} setOpen={setOpen} animate={animate}>
+    <SidebarProvider open={open} setOpen={setOpen} animate={animate} pinned={pinned} setPinned={setPinned}>
       {children}
     </SidebarProvider>
   );
