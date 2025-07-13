@@ -20,7 +20,7 @@ export const authenticate = (req: Request, res: Response, next: NextFunction):vo
     const token = req.cookies?.accessToken;
 
     if (!token) {
-      console.log("Illegal try")
+      console.log("No token provided")
       
       res.status(401).json({
         success: false,
@@ -34,7 +34,7 @@ export const authenticate = (req: Request, res: Response, next: NextFunction):vo
 
     next();
   } catch (err) {
-    console.error("Auth middleware error:", err);
+    console.error("Auth middleware error: illegal access", err);
     res.status(401).json({
       success: false,
       message: "Invalid or expired token.",

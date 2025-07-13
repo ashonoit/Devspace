@@ -3,7 +3,6 @@ import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 
 import { useCodingContext } from "../context/codingContext";
-import { useAppSelector } from "../../../redux/reduxTypeSafety";
 
 import '@xterm/xterm/css/xterm.css';
 
