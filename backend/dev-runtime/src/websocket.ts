@@ -1,10 +1,11 @@
 import { Server, Socket } from "socket.io";
+import cookie from 'cookie'
 import { Server as HttpServer } from "http";
-import { saveToB2 } from "./b2";
+import { saveToB2 } from "./services/b2storage";
 import path from "path";
-import { fetchDir, fetchFileContent, saveFile } from "./fs";
-import { TerminalManager } from "./pty";
-import { deleteResourcesBySpaceId } from "./podControl";
+import { fetchDir, fetchFileContent, saveFile } from "./services/fileSystem";
+import { TerminalManager } from "./services/pty";
+import { deleteResourcesByPodId, authorisationWithLobby } from "./services/podControl";
 import { SELF_DESTRUCT_TIME } from "./constants";
 
 const terminalManager = new TerminalManager();
@@ -15,65 +16,76 @@ export function initWs(httpServer: HttpServer) {
         cors: {
             // Should restrict this more!
             origin: "*",
+            credentials:true,
             methods: ["GET", "POST"],
         },
     });
       
     io.on("connection", async (socket) => {
-        // Auth checks should happen here
-        const spaceId = socket.handshake.auth.spaceId;   ///for testing envrironment
+        console.log("User attempting to connect")
 
-        // const host = socket.handshake.headers.host;
+        // Authorisation with lobby:-  pod will forward the jwt accessToken which will be verified by lobby
 
-        // console.log(`host is ${host}`);
-        // Split the host by '.' and take the first part as spaceId
+        // const cookies = cookie.parse(socket.handshake.headers.cookie || "");
+        // const accessToken = cookies.accessToken;
+        // const podId = socket.handshake.auth.podId;
+        const spaceId = socket.handshake.auth.spaceId;   
 
-        // const spaceId = host?.split('.')[0];
-    
+        // if (!accessToken || !podId || !spaceId) {
+        //   console.log("Missing auth fields. Disconnecting.");
+        //   socket.disconnect();
+        //   terminalManager.clear(socket.id);
+        //   return;
+        // }
+
+        // const isAuth = authorisationWithLobby(accessToken,podId);
+        // if (!isAuth) {
+        //   console.log(`Auth failed for podId=${podId}`);
+        //   socket.disconnect();
+        //   terminalManager.clear(socket.id);
+        //   return;
+        // }
+
+        // console.log(`Authenticated and authorised: ${podId}`);    
         console.log(`User connected`);
-
-        if (!spaceId) {
-            socket.disconnect();
-            terminalManager.clear(socket.id);
-            return;
-        }
+        const podId=spaceId    //delete this line <---------------------------------
 
         // delete the self-destruct timer if user reconnects within given time limit
-        if (selfDestructTimers.has(spaceId)) {
+        if (selfDestructTimers.has(podId)) {
             console.log("Self-destruct timer off")
-            clearTimeout(selfDestructTimers.get(spaceId)!);
-            selfDestructTimers.delete(spaceId);
+            clearTimeout(selfDestructTimers.get(podId)!);
+            selfDestructTimers.delete(podId);
         }
 
         socket.emit("loaded", {
             rootContent: await fetchDir("/workspace", "")
         });
 
-        initHandlers(socket, spaceId);
+        initHandlers(socket, spaceId, podId);
     });
 }
 
-function initHandlers(socket: Socket, spaceId: string) {
+function initHandlers(socket: Socket, spaceId: string, podId:string) {
 
     socket.on("disconnect", () => {
         console.log("user disconnected");
 
         const timer = setTimeout(async () => {
-            console.log(`Deleting resources for spaceId: ${spaceId}`);
+            console.log(`Deleting resources for spaceId: ${podId}`);
     
             try {
-                await deleteResourcesBySpaceId(spaceId);
-                console.log(`Resources for ${spaceId} deleted`);
+                await deleteResourcesByPodId(podId, spaceId);
+                console.log(`Resources for podId:${podId} deleted`);
             } catch (err) {
-                console.error(`Failed to delete resources for ${spaceId}`, err);
+                console.error(`Failed to delete resources for podId:${podId}`, err);
             }
     
-            selfDestructTimers.delete(spaceId);
+            selfDestructTimers.delete(podId);
             terminalManager.clear(socket.id);
         }, 5*60*1000); 
         
 
-        selfDestructTimers.set(spaceId, timer);
+        selfDestructTimers.set(podId, timer);
     });
 
     socket.on("fetchDir", async (dir: string, callback) => {

@@ -8,12 +8,12 @@ import podRoutes from './routes/pod.routes';
 const app = express();
 const PORT = process.env.PORT || 3002;
 
-app.use("/pod", podRoutes);
+app.use("/orchestrator/pod", podRoutes);
 
 app.get('/', (_req, res) => {
   res.send('Welcome to the orchestrator engine!!');
 });
 
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`Orchestrator running at http://localhost:${PORT}`);
 });

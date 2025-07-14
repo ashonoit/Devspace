@@ -6,7 +6,8 @@ import cookieParser from "cookie-parser";
 dotenv.config();
 
 import spaceRoutes from './routes/space.routes';
-import authRoutes from './routes/auth.routes'
+import authRoutes from './routes/auth.routes';
+import podRoutes from './routes/pod.routes';
 import connectDB from './db';
 
 const PORT = process.env.PORT || 3000;
@@ -26,6 +27,7 @@ app.use(cors(
 //space routes
 app.use("/api/namespace", spaceRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/pod", podRoutes);
 
 //auth routes
 

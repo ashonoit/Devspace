@@ -2,8 +2,7 @@ import { Request, Response } from 'express';
 import { copyB2Folder } from './b2.controller';
 import Space from '../models/space.model';
 import Pod from '../models/pod.model';
-import axios from 'axios';
-import {v4 as uuidv4} from 'uuid';
+import { startPod } from './pod.controller';
 
 const createNewSpace = async (req: Request, res: Response): Promise<void> => {
     // console.log("req came");
@@ -22,50 +21,53 @@ const createNewSpace = async (req: Request, res: Response): Promise<void> => {
             res.status(409).json({success:false, message:"SpaceId already taken"});
             return;
         }
-        
-        const result="success";
-        // const result = await copyB2Folder(`base/${language}`, `spaces/${spaceId}`);
 
-        if (result === "success") {
-            //step-1 : Create new Space record in db
-            const newSpace = new Space({ 
-                userId:user?.id, 
-                spaceId, 
-                desc, 
-                language
-            });
-            await newSpace.save();
+        //step-1 Create space document in db
+        const newSpace = new Space({ 
+            userId:user?._id, 
+            spaceId, 
+            desc, 
+            language
+        });
+        await newSpace.save();
 
-            console.log("Space created ", newSpace);
+        //step-2 Copy boiler code to this new spaceId in S3(currently B2)
+        // const B2result = await copyB2Folder(`base/${language}`, `spaces/${spaceId}`);
+        const B2result="success";   //temporary
 
-            // Step 2: Start Pod
-            const podResult = await startPod(spaceId, user?._id);
-            if (!podResult.success) {
-              
-              await Space.deleteOne({ spaceId }); // Cleanup DB if pod creation failed
-              res.status(500).json({ success: false, message: "Failed to start environment. Try again." });
-              return;
-            }
-            
-            // Step 3: Create a new Record with pod info
-            await Pod.create({
-              spaceId,
-              externalId: podResult.externalId,
-              ownerId: user?.id,
-              status: 'running'
-            });
-
-             res.status(200).json({
-              success: true,
-              message: "Project created",
-              spaceId,
-              externalId: podResult.externalId,
-            });
-
-            // res.status(200).json({success:true, message: "Project created", spaceId});
-        } else {
-            res.status(500).json({success:false, message: "Failed to create project" });
+        if(B2result!=="success"){
+          await Space.deleteOne({ spaceId }); // Cleanup DB if pod creation failed
+          res.status(500).json({ success: false, message: "Failed to copy boiler code. Try again." });
+          return;
         }
+          
+        // Step 3: Start Pod
+        const podResult = await startPod(spaceId, user?._id);
+        if (!podResult.success) {
+          
+          await Space.deleteOne({ spaceId }); // Cleanup DB if pod creation failed
+          res.status(500).json({ success: false, message: "Failed to start environment. Try again." });
+          return;
+        }
+
+        // Step 4: Create a new Record with pod info
+        await Pod.create({
+          spaceId,
+          podId: podResult.podId,
+          ownerId: user?._id,
+          status: 'running'
+        });
+        
+        //step-5 Send success response with externalId
+        console.log("Space created ", newSpace);
+
+        res.status(200).json({
+          success: true,
+          message: "Project created",
+          spaceId,
+          podId: podResult.podId,
+        });
+        
     } catch (error) {
         console.error("Error in createNewSpace:", error);
         res.status(500).json({success:false, message: "Failed to create project", error: String(error) });
@@ -78,31 +80,34 @@ const resumeSpace = async (req: Request, res: Response): Promise<void> => {
     const user = req.user;
     const { spaceId } = req.body;
 
+    //Step-1 Check if given spaceId exists or not
     const space = await Space.findOne({ spaceId, userId: user?.id });
     if (!space) {
       res.status(404).json({ success: false, message: "Space not found" });
       return;
     }
 
-    // Start Pod again (new externalId)
+    //Step-2: Start Pod again (new externalId)
     const podResult = await startPod(spaceId, user?._id);
     if (!podResult.success) {
       res.status(500).json({ success: false, message: "Failed to resume environment" });
       return;
     }
 
+    //step-3: Create a record of running Pod in db
     await Pod.create({
       spaceId,
-      externalId: podResult.externalId,
-      ownerId: user?.id,
+      podId: podResult.podId,
+      ownerId: user?._id,
       status: 'running'
     });
 
+    //step-4: Send success response with externalId
     res.status(200).json({
       success: true,
       message: "Space resumed",
       spaceId,
-      externalId: podResult.externalId,
+      podId: podResult.podId,
     });
   } catch (err) {
     console.error("Error in resumeSpace:", err);
@@ -112,22 +117,4 @@ const resumeSpace = async (req: Request, res: Response): Promise<void> => {
 
 
 
-
-const startPod = async (spaceId: string, userId: string) => {
-  const externalId = `${spaceId}-${uuidv4()}`;
-
-  try {
-    const res = await axios.post("http://localhost:3002/start", { spaceId, externalId });
-    
-    if (res.status === 200 || res.status === 201) {
-      return { success: true, externalId };
-    } else {
-      return { success: false };
-    }
-  } catch (err:any) {
-    console.error("Failed to start pod:", err?.message);
-    return { success: false };
-  }
-};
-
-export {createNewSpace}
+export {createNewSpace, resumeSpace}

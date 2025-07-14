@@ -16,7 +16,7 @@ const PodSchema = new mongoose.Schema({
     required: true,
     unique:true
   },
-  externalId: {
+  podId: {
     type: String,
     required: true,
     unique: true

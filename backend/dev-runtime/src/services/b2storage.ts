@@ -1,7 +1,7 @@
 import { S3Client, PutObjectCommand, CopyObjectCommand, ListObjectsV2Command, GetObjectCommand } from "@aws-sdk/client-s3";
 import fs from "fs";
 import path from "path";
-import { SELF_DESTRUCT_TIME } from "./constants";
+import { SELF_DESTRUCT_TIME } from "../constants";
 
 const s3 = new S3Client({
     endpoint: process.env.S3_ENDPOINT,
@@ -119,12 +119,22 @@ function streamToBuffer(stream: any): Promise<Buffer> {
 }
 
 export const saveToB2 = async (key: string, filePath: string, content: string): Promise<void> => {
-    const params = {
-        Bucket: process.env.S3_BUCKET ?? "",
-        Key: `${key}${filePath}`,
-        Body: content,
-        ChecksumAlgorithm: undefined, //  Prevents 'x-amz-checksum-crc32' error
-    };
 
-    await s3.send(new PutObjectCommand(params));
+    try{
+        console.log("SAVING TO:", `${key}${filePath}`);
+
+        const params = {
+            Bucket: process.env.S3_BUCKET ?? "",
+            Key: `${key}${filePath}`,
+            Body: content,
+            ChecksumAlgorithm: undefined, //  Prevents 'x-amz-checksum-crc32' error
+        };
+        await s3.send(new PutObjectCommand(params));
+
+        console.error("Upload success");
+    }
+    catch(err){
+        console.error("Upload failed", err);
+    }
+    
 };

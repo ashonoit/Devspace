@@ -11,11 +11,11 @@ const coreV1Api = kubeconfig.makeApiClient(CoreV1Api);
 const appsV1Api = kubeconfig.makeApiClient(AppsV1Api);
 const networkingV1Api = kubeconfig.makeApiClient(NetworkingV1Api);
 
-const checkPodExists = async (k8sNamespace: string, spaceId: string) => {
+const checkPodExists = async (k8sNamespace: string, podId: string) => {
     try {
         const pods = await coreV1Api.listNamespacedPod(k8sNamespace);
-        // Check if any pod has a matching label or name with the spaceId
-        const podExists = pods.body.items.some(pod => pod.metadata?.name?.includes(spaceId) || pod.metadata?.labels?.['app'] === spaceId);
+        // Check if any pod has a matching label or name with the podId
+        const podExists = pods.body.items.some(pod => pod.metadata?.name?.includes(podId) || pod.metadata?.labels?.['app'] === podId);
         console.log("Pod already exists");
         return podExists;
     } catch (error) {
@@ -25,19 +25,20 @@ const checkPodExists = async (k8sNamespace: string, spaceId: string) => {
 }
 
 const startPod = async (req: Request, res: Response): Promise<void> => {
-    const { userId, spaceId } = req.body;
+    const { userId, spaceId, podId } = req.body;
     const k8sNamespace = "default";
 
     try {
-        const podExists = await checkPodExists(k8sNamespace, spaceId);
+        const podExists = await checkPodExists(k8sNamespace, podId);
         if (podExists) {
-            res.status(200).send({ message: "Pod with the same spaceId already exists" });
+            res.status(200).send({ message: "Pod with the same podId already exists" });
             return;
         }
 
         const kubeManifests = readAndParseKubeYaml(
             path.join(__dirname, "../../service.yaml"),
-            spaceId
+            spaceId,
+            podId
         );
 
         for (const manifest of kubeManifests) {
@@ -56,7 +57,7 @@ const startPod = async (req: Request, res: Response): Promise<void> => {
             }
         }
 
-        console.log(`${spaceId} Pod created successfully`);
+        console.log(`${podId} Pod created successfully`);
         res.status(200).send({ message: "Resources created successfully" });
 
     } catch (error: any) {
@@ -73,22 +74,22 @@ const startPod = async (req: Request, res: Response): Promise<void> => {
 //------------------------Destroy the Pod---------------------------------------------
 const destroyPod = async (req: Request, res: Response) => {
   try {
-    const { userId, spaceId } = req.body;
+    const { userId, spaceId, podId } = req.body;
     const k8sNamespace = "default";
 
-    const podExists = await checkPodExists(k8sNamespace, spaceId);
+    const podExists = await checkPodExists(k8sNamespace, podId);
     if (!podExists) {
-      res.status(200).send({ message: "Pod with the same spaceId doesn't exist: cannot destroy" });
+      res.status(200).send({ message: "Pod with the same podId doesn't exist: cannot destroy" });
       return;
     }
 
-    console.log(`Cleaning up resources for spaceId: ${spaceId}`);
-    await appsV1Api.deleteNamespacedDeployment(spaceId, k8sNamespace);
-    await coreV1Api.deleteNamespacedService(spaceId, k8sNamespace);
-    await networkingV1Api.deleteNamespacedIngress(spaceId, k8sNamespace);
+    console.log(`Cleaning up resources for podId: ${podId}`);
+    await appsV1Api.deleteNamespacedDeployment(podId, k8sNamespace);
+    await coreV1Api.deleteNamespacedService(podId, k8sNamespace);
+    await networkingV1Api.deleteNamespacedIngress(podId, k8sNamespace);
 
-    console.log(`Destroyed resources of ${spaceId}`);
-    res.status(200).send({ message: `Resources for spaceId ${spaceId} destroyed successfully` });
+    console.log(`Destroyed resources of ${podId}`);
+    res.status(200).send({ message: `Resources for podId:${podId} destroyed successfully` });
 
   } catch (error) {
     console.error("Failed to destroy resources: ", error);
