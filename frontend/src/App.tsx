@@ -65,7 +65,7 @@ function App() {
               <Route path="/profile" element={<Profile />} />
             </Route>
 
-            <Route path="/namespace/:spaceId" element={<LoadCodingPage />} />
+            <Route path="/namespace/:spaceId/:podId" element={<LoadCodingPage />} />
           </Route>
 
       </Routes>

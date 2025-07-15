@@ -39,14 +39,19 @@ export function useLaunchNamespace(): LaunchResult {
       );
 
       console.log(response.data)
-      const { spaceId } = response.data;
+      const { spaceId, podId, success, message } = response.data;
 
-      if (!spaceId || typeof spaceId !== 'string') {
+      if(success===false){
+        console.log(message);
+        return;
+      }
+
+      if ((!spaceId || typeof spaceId !== 'string') || (!podId || typeof podId!=='string')) {
         throw new Error('Invalid response from server: Missing spaceId');
       }
 
       // Open the namespace in a new tab
-      window.open(`/namespace/${spaceId}`, '_blank');
+      window.open(`/namespace/${spaceId}/${podId}`, '_blank');
     } catch (err: any) {
       const message = err.response?.data?.message || err.message || 'Something went wrong while launching the workspace';
       setError(message);

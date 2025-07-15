@@ -12,7 +12,7 @@ const createNewSpace = async (req: Request, res: Response): Promise<void> => {
         const { title:spaceId, stack:language, description:desc } = req.body;
 
         if (!spaceId || !language) {
-            res.status(400).json({ message: "Missing required fields" });
+            res.status(400).json({success:false, message: "Missing required fields" });
             return;
         }
 
@@ -24,7 +24,7 @@ const createNewSpace = async (req: Request, res: Response): Promise<void> => {
 
         //step-1 Create space document in db
         const newSpace = new Space({ 
-            userId:user?._id, 
+            userId:user?.id, 
             spaceId, 
             desc, 
             language
@@ -42,7 +42,8 @@ const createNewSpace = async (req: Request, res: Response): Promise<void> => {
         }
           
         // Step 3: Start Pod
-        const podResult = await startPod(spaceId, user?._id);
+        // const podResult = await startPod(spaceId, user?._id);
+        const podResult = {success:true, podId:"logan-xcyghfbef"}     //delete this <----------------------
         if (!podResult.success) {
           
           await Space.deleteOne({ spaceId }); // Cleanup DB if pod creation failed
@@ -54,7 +55,7 @@ const createNewSpace = async (req: Request, res: Response): Promise<void> => {
         await Pod.create({
           spaceId,
           podId: podResult.podId,
-          ownerId: user?._id,
+          ownerId: user?.id,
           status: 'running'
         });
         
@@ -98,7 +99,7 @@ const resumeSpace = async (req: Request, res: Response): Promise<void> => {
     await Pod.create({
       spaceId,
       podId: podResult.podId,
-      ownerId: user?._id,
+      ownerId: user?.id,
       status: 'running'
     });
 

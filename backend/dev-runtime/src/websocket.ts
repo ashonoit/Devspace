@@ -1,5 +1,6 @@
 import { Server, Socket } from "socket.io";
-import cookie from 'cookie'
+import { ExtendedError } from "socket.io";
+import * as cookie from 'cookie'
 import { Server as HttpServer } from "http";
 import { saveToB2 } from "./services/b2storage";
 import path from "path";
@@ -15,40 +16,54 @@ export function initWs(httpServer: HttpServer) {
     const io = new Server(httpServer, {
         cors: {
             // Should restrict this more!
-            origin: "*",
+            origin: process.env.CLIENT_URI,
             credentials:true,
             methods: ["GET", "POST"],
         },
     });
+
+    io.use(async (socket, next) => {
+        try {
+            console.log("User attempting to connect")
+            // Authorisation with lobby:-  pod will forward the jwt accessToken which will be verified by lobby
+            const cookies = cookie.parse(socket.handshake.headers.cookie || "");
+            const accessToken = cookies.accessToken;
+            const podId = socket.handshake.auth.podId;
+            const spaceId = socket.handshake.auth.spaceId;
+
+            const err: ExtendedError = {    
+                name: "SocketAuthError",
+                message: "Unauthorized",
+            };
+
+            if (!accessToken || !podId || !spaceId) {
+                console.log("Socket auth failed: Missing required fields");
+                return next(err);
+                // return next(new Error("Missing auth fields"));
+            }
+
+            const isAuth = await authorisationWithLobby(accessToken, podId);
+            if (!isAuth) {
+                console.log("Socket auth failed: Lobby denied");
+                return next(err);
+                // return next(new Error("Unauthorized"));
+            }
+
+            // Attach data for use later
+            socket.data.podId = podId;
+            socket.data.spaceId = spaceId;
+            next();
+        } catch (err) {
+            next(new Error("Internal error"));
+        }
+    });
       
     io.on("connection", async (socket) => {
-        console.log("User attempting to connect")
-
-        // Authorisation with lobby:-  pod will forward the jwt accessToken which will be verified by lobby
-
-        // const cookies = cookie.parse(socket.handshake.headers.cookie || "");
-        // const accessToken = cookies.accessToken;
-        // const podId = socket.handshake.auth.podId;
-        const spaceId = socket.handshake.auth.spaceId;   
-
-        // if (!accessToken || !podId || !spaceId) {
-        //   console.log("Missing auth fields. Disconnecting.");
-        //   socket.disconnect();
-        //   terminalManager.clear(socket.id);
-        //   return;
-        // }
-
-        // const isAuth = authorisationWithLobby(accessToken,podId);
-        // if (!isAuth) {
-        //   console.log(`Auth failed for podId=${podId}`);
-        //   socket.disconnect();
-        //   terminalManager.clear(socket.id);
-        //   return;
-        // }
-
-        // console.log(`Authenticated and authorised: ${podId}`);    
+        
+        const podId = socket.data.podId;
+        const spaceId = socket.data.spaceId;
+ 
         console.log(`User connected`);
-        const podId=spaceId    //delete this line <---------------------------------
 
         // delete the self-destruct timer if user reconnects within given time limit
         if (selfDestructTimers.has(podId)) {

@@ -89,11 +89,11 @@ const destroyPod = async (req: Request, res: Response) => {
     await networkingV1Api.deleteNamespacedIngress(podId, k8sNamespace);
 
     console.log(`Destroyed resources of ${podId}`);
-    res.status(200).send({ message: `Resources for podId:${podId} destroyed successfully` });
+    res.status(200).send({success:true, message: `Resources for podId:${podId} destroyed successfully` });
 
   } catch (error) {
     console.error("Failed to destroy resources: ", error);
-    res.status(500).send({ message: "Failed to destroy resources" });
+    res.status(500).send({success:false, message: "Failed to destroy resources" });
   }
 };
 

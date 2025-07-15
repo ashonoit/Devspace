@@ -15,10 +15,8 @@ import {TerminalComponent as Terminal } from "./Terminal";
 import { RightPanels } from "./RightPanels";
 
 export const CodingPage = () => {
-    // const [searchParams] = useSearchParams();
-    // const spaceId = searchParams.get('spaceId') ?? '';
-    const { spaceId } = useParams<{ spaceId: string }>();
-    const socket = useSocket(spaceId!);
+    const { spaceId , podId} = useParams<{ spaceId: string, podId:string }>();
+    const socket = useSocket(spaceId!, podId!);   //major step <=================================
     const {isRightBarOpen, activePanel, handlePanelToggle} = useToggleContext(); 
     const panelRef = useRef<any>(null);
 
@@ -85,7 +83,7 @@ export const CodingPage = () => {
     if (!socket) return <>Connecting to socket...</>;
 
     if (!loaded) {
-        return <>Loading...</>;
+        return <div className="text-zinc-800 dark:text-zinc-200">Loading...</div>;
     }
 
     return (

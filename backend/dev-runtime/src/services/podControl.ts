@@ -3,13 +3,9 @@ import axios from 'axios';
 export const deleteResourcesByPodId = async (podId: string, spaceId:string) => {
     try {
 
-        // const res = await axios.post(`${process.env.LOBBY_URI}/api/pod/destroyPod`, {
-        //   podId
+        // const res = await axios.post(`${process.env.LOBBY_URI}/api/pod/selfDestroy`, {
+        //   podId,spaceId
         // });
-
-        // if(res.data.success ===true){
-        //     console.log(`Cleaned up resources for podId: ${podId}`);
-        // }
 
         console.log(`Cleaned up resources for podId: ${podId}`);
 
@@ -27,7 +23,7 @@ export const authorisationWithLobby = async (accessToken: string, podId: string)
 
         return res.data?.success === true;
     } catch (err:any) {
-      console.error("authorisation with lobby failed:");
+      console.error("authorisation with lobby failed:", err);
       return false;
     }
 }

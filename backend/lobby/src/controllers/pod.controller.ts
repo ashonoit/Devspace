@@ -23,6 +23,20 @@ const startPod = async (spaceId: string, userId: string) => {
   }
 };
 
+const destroyPod = async (req:Request, res:Response): Promise<void> => {
+//   const podId = `${spaceId}-${uuidv4()}`;
+  const {spaceId, podId} = req.body;
+
+  try {
+    const res = await axios.post(`${process.env.ORCHESTRATOR_URI}/orchestrator/pod/destroy`, { spaceId,podId });
+    
+    console.log(`Pod ${podId} destroyed`, res.data.message);
+    
+  } catch (err:any) {
+    console.error("Failed to start pod:", err?.message);
+  }
+};
+
 const authorisePodAccess = async (req:Request, res:Response):Promise<void> =>{
     try{
         const {podId, accessToken} = req.body;
@@ -36,7 +50,7 @@ const authorisePodAccess = async (req:Request, res:Response):Promise<void> =>{
         //Extract user info from token
         const user = jwt.verify(accessToken, process.env.JWT_SECRET as string) as JwtPayload;
         
-        if (!user || !user._id) {    //if invalid payload
+        if (!user || !user.id) {    //if invalid payload
           res.status(401).json({ success: false, message: "Invalid token payload" });
           return;
         }
@@ -45,15 +59,17 @@ const authorisePodAccess = async (req:Request, res:Response):Promise<void> =>{
         const podDoc = await Pod.findOne({ podId });
 
         if (!podDoc) {   //if pod with podId never stored in db 
+          console.log("podDoc not found")
           res.status(404).json({ success: false, message: "Pod not found" });
           return;
         }
 
-        if (podDoc.ownerId.toString() !== user._id) {   //if stored owner is not the requesting user
+        if (podDoc.ownerId.toString() !== user.id) {   //if stored owner is not the requesting user
           res.status(403).json({ success: false, message: "Not authorized for this pod" });
           return;
         }
         
+        console.log("Pod auth done")
         res.json({ success: true, message:"Authorisation successful", user });
     }
     catch(err){
@@ -65,4 +81,4 @@ const authorisePodAccess = async (req:Request, res:Response):Promise<void> =>{
     }
 }
 
-export {startPod, authorisePodAccess}
+export {startPod, authorisePodAccess, destroyPod}
