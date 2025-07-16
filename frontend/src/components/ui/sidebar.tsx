@@ -9,6 +9,7 @@ interface Links {
   label: string;
   href: string;
   icon: React.JSX.Element | React.ReactNode;
+  onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void
 }
 
 interface SidebarContextProps {
@@ -191,6 +192,7 @@ export const SidebarLink = ({
         "flex items-center justify-start gap-2  group/sidebar py-2 px-2 rounded-xl ", SIDEMENU_HOVER_LINK_BG,
         className
       )}
+      onClick={link.onClick}
       {...props}
     >
       {link.icon}

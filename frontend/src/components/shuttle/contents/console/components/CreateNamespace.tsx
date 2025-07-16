@@ -83,6 +83,19 @@ export function CreateNamespace() {
   );
 }
 
+const stacks = [
+  { 
+    stackName: "NodeJS",
+    stackValue: "nodejs"
+  },{
+    stackName: "C++",
+    stackValue: "c++"
+  },{
+    stackName: "Python",
+    stackValue: "python"
+  }
+]
+
 function StackSelect({
   value,
   setValue,
@@ -92,15 +105,20 @@ function StackSelect({
 }){
   return (
     <Select value={value} onValueChange={(val) => setValue(val)}>
-      <SelectTrigger className="w-[130px] rounded-xl bg-zinc-800 border-zinc-700 dark:text-zinc-300 text-zinc-800 focus:bg-zinc-900 ">
+      <SelectTrigger className="w-[130px] rounded-xl bg-zinc-200 dark:bg-zinc-800 border-zinc-400 dark:border-zinc-700 dark:text-zinc-300 text-zinc-800 focus:bg-zinc-300 dark:focus:bg-zinc-900">
         <SelectValue placeholder="Stack" />
       </SelectTrigger>
-      <SelectContent className=" bg-zinc-800 shadow-xl shadow-zinc-900 border-zinc-700 dark:text-zinc-300 text-zinc-800">
-        <SelectItem className="hover:bg-zinc-700/50 rounded-md cursor-pointer" value="nodejs">NodeJs</SelectItem>
-        <SelectItem className="hover:bg-zinc-700/50 rounded-md cursor-pointer " value="c++">C++</SelectItem>
-        <SelectItem className="hover:bg-zinc-700/50 rounded-md cursor-pointer" value="python">Python</SelectItem>
-        <SelectItem className="hover:bg-zinc-700/50 rounded-md cursor-pointer" value="ruby">Ruby</SelectItem>
-       
+      <SelectContent className=" bg-zinc-200 dark:bg-zinc-800 shadow-xl shadow-zinc-900 border-zinc-400 dark:border-zinc-700 dark:text-zinc-300 text-zinc-800">
+        {
+          stacks.map((stack,idx) =>{
+            return <SelectItem key={idx} className="dark:hover:bg-zinc-700/50 hover:bg-zinc-400/50 rounded-md cursor-pointer" value={stack.stackValue}>{stack.stackName}</SelectItem>;
+          })
+        }
+        {/* <SelectItem className="dark:hover:bg-zinc-700/50 hover:bg-zinc-400/50 rounded-md cursor-pointer" value="nodejs">NodeJs</SelectItem>
+        <SelectItem className="dark:hover:bg-zinc-700/50 hover:bg-zinc-400/50 rounded-md cursor-pointer " value="c++">C++</SelectItem>
+        <SelectItem className="dark:hover:bg-zinc-700/50 hover:bg-zinc-400/50 rounded-md cursor-pointer" value="python">Python</SelectItem>
+        <SelectItem className="dark:hover:bg-zinc-700/50 hover:bg-zinc-400/50 rounded-md cursor-pointer" value="ruby">Ruby</SelectItem>
+        */}
       </SelectContent>
     </Select>
   )
