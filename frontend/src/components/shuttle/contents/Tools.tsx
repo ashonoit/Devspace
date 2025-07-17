@@ -24,7 +24,7 @@ export function Tools(){
                       {theme==="dark"?
                           <Sun className="h-4 w-4 text-zinc-200 text-md"/>
                           :
-                          <Moon className="h-4 w-4"/>
+                          <Moon className="h-4 w-4 "/>
                       }
 
                   </Toggle>
@@ -41,7 +41,7 @@ export function ToolDrawer({ children }: ToolDrawerProps) {
     <div className="fixed right-0 top-1/4 z-50 -translate-y-1/2">
       <div
         className={cn(
-          "group flex h-14 max-w-[1.5rem] items-center justify-end rounded-l-full bg-gray-400 dark:bg-zinc-800 transition-[max-width] duration-500 ease-in-out hover:max-w-[200px] overflow-hidden"
+          "group flex h-14 max-w-[1.5rem] items-center justify-end rounded-l-full bg-zinc-100 dark:bg-zinc-800 transition-[max-width] duration-500 ease-in-out hover:max-w-[200px] overflow-hidden"
         )}
       >
         <div className="flex items-center gap-2 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">

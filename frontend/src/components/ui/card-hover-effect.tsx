@@ -71,17 +71,17 @@ export function Card2({
     <div className={cn(
         "rounded-2xl h-full w-full overflow-hidden relative z-20 border", CARD_BG,CARD_BORDER_AND_HOVER_BORDER,
       )}>
-      <div className="relative flex items-center justify-center h-1/3 bg-zinc-800">
+      <div className="relative flex items-center justify-center h-1/3 bg-zinc-400/60 dark:bg-zinc-800">
         {/* Line */}
-        <div className="absolute  bottom-0 left-0 w-full h-px bg-white/20 z-0" />
+        <div className="absolute  bottom-0 left-0 w-full h-px bg-black/20 dark:bg-white/20 z-0" />
 
         {/* Icon with background to hide the line behind */}
         {/* <div className={cn("z-10 text-zinc-900 dark:text-zinc-100 bg-neutral-950 px-2 text-xl font-semibold", CARD_BG)}>@</div> */}
       </div>
 
       <div className="flex flex-col items-start px-2">
-        <div className="text-lg font-medium text-white">{title}</div>
-        <div className="text-xs mt-1 text-white/50">{stackName}</div>
+        <div className="text-lg font-medium text-zinc-900 dark:text-white">{title}</div>
+        <div className="text-xs mt-1 text-black/70 dark:text-white/50">{stackName}</div>
       </div>
     </div>
   );

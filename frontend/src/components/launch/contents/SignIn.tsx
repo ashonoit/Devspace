@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { useState, } from "react";
+import { useState, useEffect} from "react";
 import { Label } from "../../ui/label";
 import { Input } from "../../ui/input";
 import { cn } from "../../../lib/utils";
@@ -11,9 +11,32 @@ import { cn } from "../../../lib/utils";
 import useGoogleAuth from "../../../hooks/useGoogleAuth";
 import { useAppDispatch, useAppSelector } from "../../../redux/reduxTypeSafety";
 import { signin } from "../../../redux/slices/authSlice";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+
+// import { useAppDispatch, useAppSelector } from "../../redux/reduxTypeSafety";
+import { loadUser } from "../../../redux/slices/authSlice";
 
 export function SignIn(){
+
+      const dispatch = useAppDispatch();
+      const location = useLocation();
+    
+      const isAuthenticated = useAppSelector(state => state.auth.authenticated);
+      const authLoading = useAppSelector(state => state.auth.loading);
+    
+      useEffect(() => {
+        dispatch(loadUser());
+      }, [location.pathname]);
+    
+      if (authLoading) {
+        return (
+          <div className="w-screen h-screen bg-black flex flex-row items-center justify-center">
+            <h1 className="text-5xl text-zinc-200">Ruk zra...</h1>
+          </div>
+        );
+      }
+    
+      if(isAuthenticated) return <Navigate to="/console"/>
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-gray-100 dark:bg-stone-950 p-6">
