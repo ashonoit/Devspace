@@ -31,25 +31,31 @@ const createNewSpace = async (req: Request, res: Response): Promise<void> => {
         });
         await newSpace.save();
 
+        console.log("Space created : ", newSpace);
+
         //step-2 Copy boiler code to this new spaceId in S3(currently B2)
-        // const B2result = await copyB2Folder(`base/${language}`, `spaces/${spaceId}`);
-        const B2result="success";   //temporary
+        const B2result = await copyB2Folder(`base/${language}`, `spaces/${spaceId}`);
+        // const B2result="success";   //temporary
 
         if(B2result!=="success"){
           await Space.deleteOne({ spaceId }); // Cleanup DB if pod creation failed
           res.status(500).json({ success: false, message: "Failed to copy boiler code. Try again." });
           return;
         }
+
+        console.log("Copied boiler code in B2")
           
         // Step 3: Start Pod
-        // const podResult = await startPod(spaceId, user?._id);
-        const podResult = {success:true, podId:"logan-xcyghfbef"}     //delete this <----------------------
+        const podResult = await startPod(spaceId, user?._id);
+        // const podResult = {success:true, podId:"logan-xcyghfbef"}     //delete this <----------------------
         if (!podResult.success) {
           
           await Space.deleteOne({ spaceId }); // Cleanup DB if pod creation failed
           res.status(500).json({ success: false, message: "Failed to start environment. Try again." });
           return;
         }
+        
+        console.log("Pod started")
 
         // Step 4: Create a new Record with pod info
         await Pod.create({
@@ -58,9 +64,11 @@ const createNewSpace = async (req: Request, res: Response): Promise<void> => {
           ownerId: user?.id,
           status: 'running'
         });
+
+        console.log("Pod doc created ")
         
         //step-5 Send success response with externalId
-        console.log("Space created ", newSpace);
+        // console.log("Space created ", newSpace);
 
         res.status(200).json({
           success: true,

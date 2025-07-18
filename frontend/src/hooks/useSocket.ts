@@ -7,7 +7,7 @@ export function useSocket(spaceId: string, podId:string): Socket | null {
   useEffect(() => {
     if (!spaceId || !podId) return;
 
-    const newSocket = io("http://localhost:3001", {
+    const newSocket = io(`http://${podId}.${import.meta.env.VITE_MINIKUBE_IP}.sslip.io`, {
       auth: { spaceId, podId },
       withCredentials: true,
     });

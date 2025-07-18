@@ -14,7 +14,6 @@ const PodSchema = new mongoose.Schema({
   spaceId: {
     type: String,
     required: true,
-    unique:true
   },
   podId: {
     type: String,

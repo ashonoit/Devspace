@@ -14,9 +14,6 @@ export const LoadCodingPage = () => {
             // const callLobbyToStartPod = async (spaceId:string, podId:string) =>{
             //     const response = await axios.post(`${import.meta.env.VITE_SERVER_URI}/api/start`, { spaceId })
             // }
-            // axios.post(`http://localhost:3002/start`, { spaceId })
-            //     .then(() => setPodCreated(true))
-            //     .catch((err : Error) => console.error(err));
 
             setPodCreated(true)
         }

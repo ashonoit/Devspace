@@ -1,0 +1,12 @@
+# Ignore node_modules
+node_modules/
+
+# Ignore environment variable
+.env
+
+# Ignore logs
+*.log
+
+# Ignore other unnecessary files
+*.tmp
+*.bak

@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 export const Output = () => {
-    const [searchParams] = useSearchParams();
-    const spaceId = searchParams.get('spaceId') ?? '';
-    const INSTANCE_URI = `ws://localhost:3003`;
+    const {spaceId, podId} = useParams<{spaceId: string, podId:string }>();
+
+    
+    const INSTANCE_URI = `http://${podId}.${import.meta.env.VITE_MINIKUBE_IP}.nip.io`;
     const [notfound, setNotFound] =useState(false);
 
     return (

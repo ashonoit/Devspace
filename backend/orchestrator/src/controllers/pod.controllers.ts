@@ -25,13 +25,13 @@ const checkPodExists = async (k8sNamespace: string, podId: string) => {
 }
 
 const startPod = async (req: Request, res: Response): Promise<void> => {
-    const { userId, spaceId, podId } = req.body;
+    const { spaceId, podId } = req.body;
     const k8sNamespace = "default";
 
     try {
         const podExists = await checkPodExists(k8sNamespace, podId);
         if (podExists) {
-            res.status(200).send({ message: "Pod with the same podId already exists" });
+            res.status(200).send({status:false, message: "Pod with the same podId already exists" });
             return;
         }
 
@@ -58,7 +58,7 @@ const startPod = async (req: Request, res: Response): Promise<void> => {
         }
 
         console.log(`${podId} Pod created successfully`);
-        res.status(200).send({ message: "Resources created successfully" });
+        res.status(200).send({status:true, message: "Resources created successfully" });
 
     } catch (error: any) {
         if (hasStatusCode(error) && error.statusCode === 409) {
@@ -74,7 +74,7 @@ const startPod = async (req: Request, res: Response): Promise<void> => {
 //------------------------Destroy the Pod---------------------------------------------
 const destroyPod = async (req: Request, res: Response) => {
   try {
-    const { userId, spaceId, podId } = req.body;
+    const {  spaceId, podId } = req.body;
     const k8sNamespace = "default";
 
     const podExists = await checkPodExists(k8sNamespace, podId);

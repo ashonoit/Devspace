@@ -7,7 +7,11 @@ import Pod from '../models/pod.model';
 
 const startPod = async (spaceId: string, userId: string) => {
 //   const podId = `${spaceId}-${uuidv4()}`;
-  const podId = `${spaceId}-${uuidv4().slice(0, 10)}`;
+  const podId = `${spaceId}-${uuidv4().slice(0, 10)}`
+  .toLowerCase()
+  .replace(/[^a-z0-9-]/g, '-')   // allow only lowercase, numbers, dash
+  .replace(/^-+/, '')            // remove leading hyphens
+  .replace(/-+$/, '');           // remove trailing hyphens 
 
   try {
     const res = await axios.post(`${process.env.ORCHESTRATOR_URI}/orchestrator/pod/start`, { spaceId,podId });
@@ -28,12 +32,13 @@ const destroyPod = async (req:Request, res:Response): Promise<void> => {
   const {spaceId, podId} = req.body;
 
   try {
-    const res = await axios.post(`${process.env.ORCHESTRATOR_URI}/orchestrator/pod/destroy`, { spaceId,podId });
+    const result = await axios.post(`${process.env.ORCHESTRATOR_URI}/orchestrator/pod/destroy`, { spaceId,podId });
     
-    console.log(`Pod ${podId} destroyed`, res.data.message);
-    
+    console.log(`Pod ${podId} destroyed`, result.data.message);
+    res.status(200).json({ success: true, message:`Pod ${podId} is getting destroyed`});
   } catch (err:any) {
     console.error("Failed to start pod:", err?.message);
+    res.status(500).json({ success: false, message:`Failed to destroy Pod ${podId}`});
   }
 };
 
@@ -51,6 +56,7 @@ const authorisePodAccess = async (req:Request, res:Response):Promise<void> =>{
         const user = jwt.verify(accessToken, process.env.JWT_SECRET as string) as JwtPayload;
         
         if (!user || !user.id) {    //if invalid payload
+          console.log("Invalid payload")
           res.status(401).json({ success: false, message: "Invalid token payload" });
           return;
         }
@@ -65,12 +71,13 @@ const authorisePodAccess = async (req:Request, res:Response):Promise<void> =>{
         }
 
         if (podDoc.ownerId.toString() !== user.id) {   //if stored owner is not the requesting user
+          console.log("Requesting user is not the owner")
           res.status(403).json({ success: false, message: "Not authorized for this pod" });
           return;
         }
         
         console.log("Pod auth done")
-        res.json({ success: true, message:"Authorisation successful", user });
+        res.status(200).json({ success: true, message:"Authorisation successful", user });
     }
     catch(err){
         console.error("Pod access denied ", err);
