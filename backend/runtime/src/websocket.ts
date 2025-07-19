@@ -6,28 +6,38 @@ import { saveToB2 } from "./services/b2storage";
 import path from "path";
 import { fetchDir, fetchFileContent, saveFile } from "./services/fileSystem";
 import { TerminalManager } from "./services/pty";
-import { deleteResourcesByPodId, authorisationWithLobby } from "./services/podControl";
+import { deleteResourcesByPodId, authWithJWT } from "./services/podControl";
 import { SELF_DESTRUCT_TIME } from "./constants";
 
 const terminalManager = new TerminalManager();
 const selfDestructTimers: Map<string, NodeJS.Timeout> = new Map();
 
+console.log("client uri : ",process.env.CLIENT_URI);
+
 export function initWs(httpServer: HttpServer) {
     const io = new Server(httpServer, {
         cors: {
             // Should restrict this more!
-            origin: process.env.CLIENT_URI,
-            credentials:true,
+            origin: "*",
             methods: ["GET", "POST"],
         },
     });
+
+    // const io = new Server(httpServer, {
+    //     cors: {
+    //         // Should restrict this more!
+    //         credentials: true,
+    //         origin: process.env.CLIENT_URI,
+    //         methods: ["GET", "POST"],
+    //     },
+    // });
 
     io.use(async (socket, next) => {
         try {
             console.log("User attempting to connect")
             // Authorisation with lobby:-  pod will forward the jwt accessToken which will be verified by lobby
-            const cookies = cookie.parse(socket.handshake.headers.cookie || "");
-            const accessToken = cookies.accessToken;
+            // const cookies = cookie.parse(socket.handshake.headers.cookie || "");
+            const podToken = socket.handshake.auth.podToken;
             const podId = socket.handshake.auth.podId;
             const spaceId = socket.handshake.auth.spaceId;
 
@@ -36,13 +46,8 @@ export function initWs(httpServer: HttpServer) {
                 message: "Unauthorized",
             };
 
-            if (!accessToken || !podId || !spaceId) {
-                console.log("Socket auth failed: Missing required fields");
-                return next(err);
-                // return next(new Error("Missing auth fields"));
-            }
 
-            const isAuth = await authorisationWithLobby(accessToken, podId);
+            const isAuth = await authWithJWT(podToken, podId);
             if (!isAuth) {
                 console.log("Socket auth failed: Lobby denied");
                 return next(err);

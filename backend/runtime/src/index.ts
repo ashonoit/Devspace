@@ -12,12 +12,16 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 
-app.use(cors(
-  {
-  origin: process.env.CLIENT_URI,
-  credentials: true,
-  }
-));
+// const corsOptions = {
+//   origin: process.env.CLIENT_URI,
+//   credentials: true,
+// };
+
+// app.use(cors(corsOptions));
+// app.options(/^\/.*$/, cors(corsOptions));
+
+app.use(cors());
+
 
 const httpServer = createServer(app);
 

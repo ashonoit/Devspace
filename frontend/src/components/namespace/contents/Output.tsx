@@ -14,7 +14,7 @@ export const Output = () => {
             <div className="h-full">
                 {!notfound ? (
                     <iframe 
-                        className="w-full h-full border-none bg-zinc-950"
+                        className="w-full h-full border-none bg-zinc-300"
                         src={`${INSTANCE_URI}`} 
                         onError={()=>setNotFound(true)}
                     />

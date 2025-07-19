@@ -31,6 +31,9 @@ export function useLaunchNamespace(): LaunchResult {
     setLoading(true);
     setError(null);
 
+     // Reserve the new tab immediately
+    const newTab = window.open('', '_blank');
+
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_SERVER_URI}/api/namespace/launch`,
@@ -50,8 +53,10 @@ export function useLaunchNamespace(): LaunchResult {
         throw new Error('Invalid response from server: Missing spaceId');
       }
 
-      // Open the namespace in a new tab
-      window.open(`/namespace/${spaceId}/${podId}`, '_blank');
+      if (newTab) {
+        newTab.location.href = `/namespace/${spaceId}/${podId}`;
+      }
+      
     } catch (err: any) {
       const message = err.response?.data?.message || err.message || 'Something went wrong while launching the workspace';
       setError(message);

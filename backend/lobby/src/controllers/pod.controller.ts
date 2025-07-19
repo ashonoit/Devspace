@@ -5,7 +5,7 @@ import jwt, {JwtPayload as DefaultJwtPayload, JwtPayload} from "jsonwebtoken";
 import Pod from '../models/pod.model';
 
 
-const startPod = async (spaceId: string, userId: string) => {
+const startPod = async (spaceId: string, userId: string | undefined) => {
 //   const podId = `${spaceId}-${uuidv4()}`;
   const podId = `${spaceId}-${uuidv4().slice(0, 10)}`
   .toLowerCase()
@@ -41,6 +41,41 @@ const destroyPod = async (req:Request, res:Response): Promise<void> => {
     res.status(500).json({ success: false, message:`Failed to destroy Pod ${podId}`});
   }
 };
+
+const getPodToken = async (req:Request, res:Response): Promise<void> =>{
+  try{
+    const {spaceId, podId} = req.body;
+    const userId = req.user?.id;
+
+    if(!userId || !podId){
+      res.status(400).json({success:false, message:"Either userId or podId not sent"});
+      return;
+    }
+
+    const pod = await Pod.findOne({podId})
+
+    if(!pod || pod?.status==="stopped"){
+      res.status(400).json({success:false, message:"Pod not running"});
+      return;
+    }else if(pod.ownerId.toString() !== userId){
+      res.status(400).json({success:false, message:"User is not the owner"});
+      return;
+    }
+
+    const podToken = jwt.sign(
+              { userId, podId, spaceId},
+              process.env.JWT_POD_SECRET!,
+              { expiresIn: "2h" }
+            );
+    
+    console.log("Pod token sent")
+    res.status(200).json({success:true, message:"Here is the podtoken", podToken})
+  }
+  catch(err){
+    console.log("Error in getUserPodToken ", err);
+    res.status(500).json({success:false, message:"Server error in getPodToken"});
+  }
+}
 
 const authorisePodAccess = async (req:Request, res:Response):Promise<void> =>{
     try{
@@ -88,4 +123,4 @@ const authorisePodAccess = async (req:Request, res:Response):Promise<void> =>{
     }
 }
 
-export {startPod, authorisePodAccess, destroyPod}
+export {startPod, authorisePodAccess, destroyPod, getPodToken}

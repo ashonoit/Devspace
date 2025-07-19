@@ -46,7 +46,7 @@ const createNewSpace = async (req: Request, res: Response): Promise<void> => {
         console.log("Copied boiler code in B2")
           
         // Step 3: Start Pod
-        const podResult = await startPod(spaceId, user?._id);
+        const podResult = await startPod(spaceId, user?.id);
         // const podResult = {success:true, podId:"logan-xcyghfbef"}     //delete this <----------------------
         if (!podResult.success) {
           
@@ -97,7 +97,7 @@ const resumeSpace = async (req: Request, res: Response): Promise<void> => {
     }
 
     //Step-2: Start Pod again (new externalId)
-    const podResult = await startPod(spaceId, user?._id);
+    const podResult = await startPod(spaceId, user?.id);
     if (!podResult.success) {
       res.status(500).json({ success: false, message: "Failed to resume environment" });
       return;

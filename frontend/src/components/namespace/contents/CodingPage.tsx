@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { ResizablePanelGroup, ResizableHandle, ResizablePanel } from "../../ui/resizable";
 
 import { useSocket } from "../../../hooks/useSocket";
+import { usePodToken } from "../../../hooks/usePodToken";
 import {File, RemoteFile,Type } from "./files/file-manager";
 import { CodingContext } from "../context/codingContext";
 import { useToggleContext } from "../context/toggleContext";
@@ -16,7 +17,13 @@ import { RightPanels } from "./RightPanels";
 
 export const CodingPage = () => {
     const { spaceId , podId} = useParams<{ spaceId: string, podId:string }>();
-    const socket = useSocket(spaceId!, podId!);   //major step <=================================
+    if (!spaceId || !podId) {
+      return <div>Missing parameters in URL</div>;
+    }
+
+    const { podToken, loading:loadingToken, error:errorToken } = usePodToken(spaceId!, podId!);
+
+    const socket = useSocket(spaceId!, podId!, podToken!);   //major step <=================================
     const {isRightBarOpen, activePanel, handlePanelToggle} = useToggleContext(); 
     const panelRef = useRef<any>(null);
 
