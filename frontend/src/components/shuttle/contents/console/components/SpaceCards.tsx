@@ -4,9 +4,8 @@ export function SpaceCards
 ({projects}:
   {
     projects: {
-      title: string;
-      description: string;
-      link: string;
+      spaceId: string;
+      language: string;
     }[]
   }
 ) 

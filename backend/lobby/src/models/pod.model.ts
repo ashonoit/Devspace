@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 export interface IPod extends mongoose.Document {
   spaceId: string;
-  externalId: string;
+  podId: string;
   ownerId: mongoose.Types.ObjectId;
   status: 'running' | 'stopped' | 'failed' | 'pending';
   ip?: string;

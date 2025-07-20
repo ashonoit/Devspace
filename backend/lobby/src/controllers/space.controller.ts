@@ -1,7 +1,10 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import { copyB2Folder } from './b2.controller';
 import Space from '../models/space.model';
 import Pod from '../models/pod.model';
+import RecentVisit from '../models/recentVisit.model';
+
 import { startPod } from './pod.controller';
 
 const createNewSpace = async (req: Request, res: Response): Promise<void> => {
@@ -70,6 +73,8 @@ const createNewSpace = async (req: Request, res: Response): Promise<void> => {
         //step-5 Send success response with externalId
         // console.log("Space created ", newSpace);
 
+        await updateRecentVisit(user?.id, spaceId);
+
         res.status(200).json({
           success: true,
           message: "Project created",
@@ -95,6 +100,8 @@ const resumeSpace = async (req: Request, res: Response): Promise<void> => {
       res.status(404).json({ success: false, message: "Space not found" });
       return;
     }
+
+    await updateRecentVisit(user?.id, spaceId);
 
     //Step-2: Start Pod again (new externalId)
     const podResult = await startPod(spaceId, user?.id);
@@ -124,6 +131,63 @@ const resumeSpace = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const getRecentVisits = async (req:Request, res:Response):Promise<void> => {
+  try{
+    const user = req.user;
+    const recentVisits = await RecentVisit.aggregate([
+      // 1. Match by userId
+      {
+        $match: { userId: new mongoose.Types.ObjectId(user?.id) }
+      },
+      // 2. Sort by lastVisit descending
+      {
+        $sort: { lastVisit: -1 }
+      },
+      // 3. Lookup to join with Space collection
+      {
+        $lookup: {
+          from: 'spaces',                  // collection name in MongoDB (usually lowercase plural)
+          localField: 'spaceId',
+          foreignField: '_id',
+          as: 'space'
+        }
+      },
+      // 4. Unwind the joined space array
+      {
+        $unwind: '$space'
+      },
+      // 5. Project the desired fields
+      {
+        $project: {
+          _id: 0,
+          spaceId: '$spaceId',
+          language: '$space.language',
+          lastVisit: '$lastVisit'
+        }
+      }
+    ]);
+
+    res.status(200).json({success:true, message:"Sent recently visited spaces as res.data.recentVisits", recentVisits}, )
+  }
+  catch(err){
+    console.log("Error in fetching recently visited spaces : ", err);
+    res.status(500).json({success:false, message:"Server failed to get recently visited spaces"});
+  }
+}
+
+const updateRecentVisit = async (userId:string|undefined, spaceId:string) =>{
+  try{
+    await RecentVisit.updateOne(
+      { userId, spaceId },                        // filter
+      { $set: { lastVisit: new Date() } },        // update
+      { upsert: true }                            // insert if not found
+    );
+  }
+  catch(err){
+    console.error("Error updating recent visit:", err);
+  }
+}
 
 
-export {createNewSpace, resumeSpace}
+
+export {createNewSpace, resumeSpace, getRecentVisits}

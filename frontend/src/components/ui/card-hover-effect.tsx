@@ -9,9 +9,8 @@ export const HoverEffect = ({
   className,
 }: {
   items: {
-    title: string;
-    description: string;
-    link: string;
+    spaceId: string;
+    language: string;
   }[];
   className?: string;
 }) => {
@@ -20,14 +19,13 @@ export const HoverEffect = ({
   return (
     <div
       className={cn(
-        "flex overflow-x-auto gap-4 py-1 px-4 snap-x snap-mandatory","scrollbar-hide",
+        "flex overflow-x-auto gap-4 py-1 pr-4 snap-x snap-mandatory","scrollbar-hide",
         className
       )}
     >
       {items.map((item, idx) => (
         <a
-          href={item?.link}
-          key={item?.link}
+          key={item?.spaceId}
           className="snap-start relative group  block p-2 h-[150px] w-[150px] shrink-0"
           onMouseEnter={() => setHoveredIndex(idx)}
           onMouseLeave={() => setHoveredIndex(null)}
@@ -53,7 +51,7 @@ export const HoverEffect = ({
             <CardTitle>{item.title}</CardTitle>
             <CardDescription>{item.description}</CardDescription>
           </Card> */}
-          <Card2 title={item.title} stackName={item.description}/>
+          <Card2 title={item.spaceId} stackName={item.language}/>
         </a>
       ))}
     </div>
