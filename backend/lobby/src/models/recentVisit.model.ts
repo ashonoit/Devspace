@@ -1,13 +1,13 @@
 import mongoose from "mongoose";
 
 export interface IRecentVisit extends mongoose.Document {
-    spaceId:string,
+    spaceDocId:string,
     userId:string,
     lastVisit:Date
 }
 
 const RecentVisitSchema = new mongoose.Schema({
-    spaceId:{
+    spaceDocId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Space',
         required:true

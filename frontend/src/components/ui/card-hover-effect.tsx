@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 
 import { CARD_BG,HOVER_CARD_BG, CARD_BORDER_AND_HOVER_BORDER} from "../../lib/constants";
+import { useResumeNamespace } from "../../hooks/useResumeNamespace";
 
 export const HoverEffect = ({
   items,
@@ -65,9 +66,16 @@ export function Card2({
   title: string;
   stackName: string;
 }) {
+  const {resume, loading} = useResumeNamespace();
+  const handleResume = async () => {
+    if (loading) return;
+    await resume( title ); // just delegate
+  };
+
   return (
-    <div className={cn(
-        "rounded-2xl h-full w-full overflow-hidden relative z-20 border", CARD_BG,CARD_BORDER_AND_HOVER_BORDER,
+    <div onClick={handleResume}
+      className={cn(
+        "rounded-2xl h-full cursor-pointer w-full overflow-hidden relative z-20 border", CARD_BG,CARD_BORDER_AND_HOVER_BORDER,
       )}>
       <div className="relative flex items-center justify-center h-1/3 bg-zinc-400/60 dark:bg-zinc-800">
         {/* Line */}
@@ -77,8 +85,8 @@ export function Card2({
         {/* <div className={cn("z-10 text-zinc-900 dark:text-zinc-100 bg-neutral-950 px-2 text-xl font-semibold", CARD_BG)}>@</div> */}
       </div>
 
-      <div className="flex flex-col items-start px-2">
-        <div className="text-lg font-medium text-zinc-900 dark:text-white">{title}</div>
+      <div className="flex flex-col items-start px-2 py-1">
+        <div className="text-md font-medium text-zinc-900 dark:text-white truncate w-full overflow-hidden whitespace-nowrap">{title}</div>
         <div className="text-xs mt-1 text-black/70 dark:text-white/50">{stackName}</div>
       </div>
     </div>
@@ -93,7 +101,7 @@ export const Card = ({
   children: React.ReactNode;
 }) => {
   return (
-    <div
+    <div 
       className={cn(
         "rounded-2xl h-full w-full p-1 overflow-hidden relative z-20 border", CARD_BG,CARD_BORDER_AND_HOVER_BORDER,
         className

@@ -27,8 +27,8 @@ export const useRecentVisits = () => {
           throw new Error("Failed to fetch recent visits");
         }
         const data = await response.data;
-        console.log("Got recent visits", data)
-        setRecentVisits(data);
+        // console.log("Got recent visits", data)
+        setRecentVisits(data.recentVisits);
       } catch (err: any) {
         setError(err.message || "Unknown error");
       } finally {

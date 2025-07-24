@@ -35,6 +35,19 @@ const destroyPod = async (req:Request, res:Response): Promise<void> => {
     const result = await axios.post(`${process.env.ORCHESTRATOR_URI}/orchestrator/pod/destroy`, { spaceId,podId });
     
     console.log(`Pod ${podId} destroyed`, result.data.message);
+    
+    const updated = await Pod.findOneAndUpdate(
+      { podId },
+      { $set: { status: 'stopped' } },
+      { new: true }
+    );
+
+    if (!updated) {
+      console.warn(`Pod with ID ${podId} not found in database`);
+    } else {
+      console.log(`Pod ${podId} marked as stopped in DB`);
+    }
+
     res.status(200).json({ success: true, message:`Pod ${podId} is getting destroyed`});
   } catch (err:any) {
     console.error("Failed to start pod:", err?.message);

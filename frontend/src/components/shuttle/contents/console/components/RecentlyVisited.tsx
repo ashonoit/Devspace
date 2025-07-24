@@ -7,12 +7,20 @@ export const projects = [
     language:
       "Python",
   },
+  {
+    spaceId: "Xux",
+    language:
+      "Python",
+  },
   
   
 ];
 
 export function RecentlyVisited() {
   const { recentVisits, loading, error } = useRecentVisits();
+  if(loading) return (<div>Loading...</div>)
+
+    // console.log("Recent : ", recentVisits)
   // console.log("got it ",recentVisits)
 
   if (loading) return <p>Loading recent visits...</p>;
@@ -22,7 +30,7 @@ export function RecentlyVisited() {
     <div className="mb-6">
       <h4 className="text-md font-sm text-gray-900 dark:text-gray-300">Recently visited</h4>
       <div className="">
-        <SpaceCards projects={projects}/>
+        <SpaceCards projects={recentVisits}/>
       </div>
     </div>
   );

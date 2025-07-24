@@ -73,7 +73,7 @@ const createNewSpace = async (req: Request, res: Response): Promise<void> => {
         //step-5 Send success response with externalId
         // console.log("Space created ", newSpace);
 
-        await updateRecentVisit(user?.id, spaceId);
+        await updateRecentVisit(user?.id, newSpace._id as any);
 
         res.status(200).json({
           success: true,
@@ -101,7 +101,19 @@ const resumeSpace = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    await updateRecentVisit(user?.id, spaceId);
+    await updateRecentVisit(user?.id, space._id as any);
+
+    const pod = await Pod.findOne({spaceId, status:"running"})
+
+    if(pod){
+      res.status(200).json({
+        success:true,
+        message:"Pod already exists with this spaceId, redirecting",
+        spaceId,
+        podId:pod.podId
+      })
+      return;
+    }
 
     //Step-2: Start Pod again (new externalId)
     const podResult = await startPod(spaceId, user?.id);
@@ -147,7 +159,7 @@ const getRecentVisits = async (req:Request, res:Response):Promise<void> => {
       {
         $lookup: {
           from: 'spaces',                  // collection name in MongoDB (usually lowercase plural)
-          localField: 'spaceId',
+          localField: 'spaceDocId',
           foreignField: '_id',
           as: 'space'
         }
@@ -160,7 +172,7 @@ const getRecentVisits = async (req:Request, res:Response):Promise<void> => {
       {
         $project: {
           _id: 0,
-          spaceId: '$spaceId',
+          spaceId: '$space.spaceId',
           language: '$space.language',
           lastVisit: '$lastVisit'
         }
@@ -175,10 +187,10 @@ const getRecentVisits = async (req:Request, res:Response):Promise<void> => {
   }
 }
 
-const updateRecentVisit = async (userId:string|undefined, spaceId:string) =>{
+const updateRecentVisit = async (userId:string|undefined, spaceDocId:string) =>{
   try{
     await RecentVisit.updateOne(
-      { userId, spaceId },                        // filter
+      { userId, spaceDocId },                        // filter
       { $set: { lastVisit: new Date() } },        // update
       { upsert: true }                            // insert if not found
     );
