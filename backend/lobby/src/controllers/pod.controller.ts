@@ -90,50 +90,50 @@ const getPodToken = async (req:Request, res:Response): Promise<void> =>{
   }
 }
 
-const authorisePodAccess = async (req:Request, res:Response):Promise<void> =>{
-    try{
-        const {podId, accessToken} = req.body;
+// const authorisePodAccess = async (req:Request, res:Response):Promise<void> =>{
+//     try{
+//         const {podId, accessToken} = req.body;
 
-        if (!accessToken || !podId) {
-            console.log("Either token or podID not provided by pod")
-            res.status(400).json({ success: false, message: "Missing accessToken or podId" });
-            return;
-        }
+//         if (!accessToken || !podId) {
+//             console.log("Either token or podID not provided by pod")
+//             res.status(400).json({ success: false, message: "Missing accessToken or podId" });
+//             return;
+//         }
         
-        //Extract user info from token
-        const user = jwt.verify(accessToken, process.env.JWT_SECRET as string) as JwtPayload;
+//         //Extract user info from token
+//         const user = jwt.verify(accessToken, process.env.JWT_SECRET as string) as JwtPayload;
         
-        if (!user || !user.id) {    //if invalid payload
-          console.log("Invalid payload")
-          res.status(401).json({ success: false, message: "Invalid token payload" });
-          return;
-        }
+//         if (!user || !user.id) {    //if invalid payload
+//           console.log("Invalid payload")
+//           res.status(401).json({ success: false, message: "Invalid token payload" });
+//           return;
+//         }
 
-        //find the pod stored in db
-        const podDoc = await Pod.findOne({ podId });
+//         //find the pod stored in db
+//         const podDoc = await Pod.findOne({ podId });
 
-        if (!podDoc) {   //if pod with podId never stored in db 
-          console.log("podDoc not found")
-          res.status(404).json({ success: false, message: "Pod not found" });
-          return;
-        }
+//         if (!podDoc) {   //if pod with podId never stored in db 
+//           console.log("podDoc not found")
+//           res.status(404).json({ success: false, message: "Pod not found" });
+//           return;
+//         }
 
-        if (podDoc.ownerId.toString() !== user.id) {   //if stored owner is not the requesting user
-          console.log("Requesting user is not the owner")
-          res.status(403).json({ success: false, message: "Not authorized for this pod" });
-          return;
-        }
+//         if (podDoc.ownerId.toString() !== user.id) {   //if stored owner is not the requesting user
+//           console.log("Requesting user is not the owner")
+//           res.status(403).json({ success: false, message: "Not authorized for this pod" });
+//           return;
+//         }
         
-        console.log("Pod auth done")
-        res.status(200).json({ success: true, message:"Authorisation successful", user });
-    }
-    catch(err){
-        console.error("Pod access denied ", err);
-        res.status(401).json({
-          success: false,
-          message: "Invalid or expired token.",
-        });
-    }
-}
+//         console.log("Pod auth done")
+//         res.status(200).json({ success: true, message:"Authorisation successful", user });
+//     }
+//     catch(err){
+//         console.error("Pod access denied ", err);
+//         res.status(401).json({
+//           success: false,
+//           message: "Invalid or expired token.",
+//         });
+//     }
+// }
 
-export {startPod, authorisePodAccess, destroyPod, getPodToken}
+export {startPod, destroyPod, getPodToken}

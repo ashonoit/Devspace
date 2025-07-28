@@ -17,7 +17,6 @@ console.log("client uri : ",process.env.CLIENT_URI);
 export function initWs(httpServer: HttpServer) {
     const io = new Server(httpServer, {
         cors: {
-            // Should restrict this more!
             origin: "*",
             methods: ["GET", "POST"],
         },
