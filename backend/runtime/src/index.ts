@@ -22,6 +22,11 @@ app.use(express.json());
 
 app.use(cors());
 
+app.get('/healthz', (req, res) => {
+  // This route confirms the HTTP server is running.
+  res.status(200).send('OK');
+});
+
 
 const httpServer = createServer(app);
 

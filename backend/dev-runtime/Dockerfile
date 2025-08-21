@@ -40,7 +40,7 @@ ENV AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
 ENV AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
 
 # Use the credentials from .env to pull user code from your B2 bucket
-RUN aws s3 cp s3://codespace777/spaces/nervous/ /workspace/ \
+RUN aws s3 cp s3://codespace777/spaces/InstantCrush/ /workspace/ \
       --recursive \
       --endpoint-url https://s3.eu-central-003.backblazeb2.com \
       --region eu-central-003

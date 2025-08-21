@@ -26,7 +26,7 @@ import { io, Socket } from "socket.io-client";
 
 export function useSocket(spaceId: string, podId: string, podToken: string): Socket | null {
   const [socket, setSocket] = useState<Socket | null>(null);
-  const retryCount = useRef(0);
+  const retryCount = useRef(5);
   const maxRetries = 9;
 
   useEffect(() => {
@@ -38,7 +38,8 @@ export function useSocket(spaceId: string, podId: string, podToken: string): Soc
     const connectWithRetry = () => {
       const delay = Math.min(1000 * 2 ** retryCount.current, 300000); // exponential backoff with cap
 
-      currentSocket = io(`ws://${podId}.${import.meta.env.VITE_MINIKUBE_IP}.sslip.io`, {
+      //ws://${podId}.${import.meta.env.VITE_MINIKUBE_IP}.sslip.io
+      currentSocket = io(`ws://localhost:3001`, {
         auth: { spaceId, podId, podToken },
         autoConnect: false, // we will manually control connection
         reconnection: false // we handle it manually
@@ -63,7 +64,8 @@ export function useSocket(spaceId: string, podId: string, podToken: string): Soc
       });
     };
 
-    connectWithRetry();
+    setTimeout(() => connectWithRetry(), 1000*2);
+    // connectWithRetry();
 
     return () => {
       isCancelled = true;

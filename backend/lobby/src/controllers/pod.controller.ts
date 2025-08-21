@@ -14,7 +14,9 @@ const startPod = async (spaceId: string, userId: string | undefined) => {
   .replace(/-+$/, '');           // remove trailing hyphens 
 
   try {
-    const res = await axios.post(`${process.env.ORCHESTRATOR_URI}/orchestrator/pod/start`, { spaceId,podId });
+    //while using docker container, commenting this :----------------------------------------------
+    // const res = await axios.post(`${process.env.ORCHESTRATOR_URI}/orchestrator/pod/start`, { spaceId,podId });
+    const res ={status:200};
     
     if (res.status === 200 || res.status === 201) {
       return { success: true, podId };
@@ -32,7 +34,9 @@ const destroyPod = async (req:Request, res:Response): Promise<void> => {
   const {spaceId, podId} = req.body;
 
   try {
-    const result = await axios.post(`${process.env.ORCHESTRATOR_URI}/orchestrator/pod/destroy`, { spaceId,podId });
+    //while using docker container, commenting this :-----------------------------
+    // const result = await axios.post(`${process.env.ORCHESTRATOR_URI}/orchestrator/pod/destroy`, { spaceId,podId });
+    const result = {data:{message:"Destroyed pod"}}
     
     console.log(`Pod ${podId} destroyed`, result.data.message);
     
@@ -50,7 +54,7 @@ const destroyPod = async (req:Request, res:Response): Promise<void> => {
 
     res.status(200).json({ success: true, message:`Pod ${podId} is getting destroyed`});
   } catch (err:any) {
-    console.error("Failed to start pod:", err?.message);
+    console.error("Failed to destroy pod:", err?.message);
     res.status(500).json({ success: false, message:`Failed to destroy Pod ${podId}`});
   }
 };

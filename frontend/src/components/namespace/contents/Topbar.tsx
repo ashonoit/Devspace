@@ -17,7 +17,7 @@ export function Topbar({ spaceId }: TopbarProps) {
 
 
   return (
-    <div className="w-full h-12 px-4 flex items-center bg-zinc-100 dark:bg-zinc-800 shadow-sm">
+    <div className="w-full h-12 px-4 flex items-center bg-zinc-100 dark:bg-zinc-800 shadow-sm cursor-pointer select-none">
       {/* Logo + Name */}
       <div className="flex items-center gap-2">
         <RocketIcon className="w-5 h-5 text-zinc-700 dark:text-zinc-300" />

@@ -62,7 +62,7 @@ export const TerminalComponent = () => {
                 term.write(str);
             } else if (typeof data === "string") {
                 term.write(data);
-                console.log(data)
+                // console.log(data)
             }
         }
 
@@ -71,7 +71,7 @@ export const TerminalComponent = () => {
 
         term.onData((data: string) => {
             socket.emit("terminalData", { data });
-            console.log(data)
+            // console.log(data)
             term.scrollToBottom();
         });
 

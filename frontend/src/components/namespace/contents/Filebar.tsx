@@ -20,7 +20,7 @@ export const Filebar = () => {
   }, [selectedFile])
 
   return (
-    <div>
+    <div className="select-none">
       {/* <div className="flex h-full w-[250px] border-r border-r-zinc-700"> */}
         
           <FileTree

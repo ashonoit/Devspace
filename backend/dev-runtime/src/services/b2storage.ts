@@ -19,7 +19,7 @@ const s3 = new S3Client({
 
 export const fetchB2Folder = async (key: string, localPath: string): Promise<void> => {
     const params = {
-        Bucket: process.env.S3_BUCKET ?? "",
+        Bucket: process.env.S3_BUCKET ?? "codespace777",
         Prefix: key,
 
         ChecksumAlgorithm: undefined,
@@ -31,7 +31,7 @@ export const fetchB2Folder = async (key: string, localPath: string): Promise<voi
             const fileKey = file.Key;
             if (fileKey) {
                 const getParams = {
-                    Bucket: process.env.S3_BUCKET ?? "",
+                    Bucket: process.env.S3_BUCKET ?? "codespace777",
                     Key: fileKey,
                     ChecksumAlgorithm: undefined,
                 };
@@ -49,7 +49,7 @@ export const fetchB2Folder = async (key: string, localPath: string): Promise<voi
 export const copyB2Folder = async (sourcePrefix: string, destinationPrefix: string, continuationToken?: string): Promise<void> => {
     try {
         const listParams = {
-            Bucket: process.env.S3_BUCKET ?? "",
+            Bucket: process.env.S3_BUCKET ?? "codespace777",
             Prefix: sourcePrefix,
             ContinuationToken: continuationToken,
 
@@ -64,7 +64,7 @@ export const copyB2Folder = async (sourcePrefix: string, destinationPrefix: stri
             if (!object.Key) continue;
             let destinationKey = object.Key.replace(sourcePrefix, destinationPrefix);
             let copyParams = {
-                Bucket: process.env.S3_BUCKET ?? "",
+                Bucket: process.env.S3_BUCKET ?? "codespace777",
                 CopySource: `/${process.env.S3_BUCKET}/${object.Key}`,
                 Key: destinationKey,
 
@@ -124,7 +124,7 @@ export const saveToB2 = async (key: string, filePath: string, content: string): 
         console.log("SAVING TO:", `${key}${filePath}`);
 
         const params = {
-            Bucket: process.env.S3_BUCKET ?? "",
+            Bucket: process.env.S3_BUCKET ?? "codespace777",
             Key: `${key}${filePath}`,
             Body: content,
             ChecksumAlgorithm: undefined, //  Prevents 'x-amz-checksum-crc32' error

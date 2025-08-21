@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 export const Output = () => {
     const {spaceId, podId} = useParams<{spaceId: string, podId:string }>();
 
-    
+    //http://${podId}.${import.meta.env.VITE_MINIKUBE_IP}.nip.io
     const INSTANCE_URI = `http://${podId}.${import.meta.env.VITE_MINIKUBE_IP}.nip.io`;
     const [notfound, setNotFound] =useState(false);
 
