@@ -6,9 +6,12 @@ import { useCodingContext } from "../context/codingContext";
 import { useAppSelector } from "../../../redux/reduxTypeSafety";
 import { MonacoBinding } from "y-monaco";
 import type * as monaco from 'monaco-editor';
+import { useYjs } from "../../../hooks/useYjs";
 
 export const CodeEditor = () => {
-    const { selectedFile, activeDoc, isDocPopulated } = useCodingContext();
+    const { selectedFile, activeDoc, isDocPopulated} = useCodingContext();
+    
+    
     const theme = useAppSelector(state => state.theme.mode);
     const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
@@ -17,7 +20,9 @@ export const CodeEditor = () => {
         let binding: MonacoBinding | null = null;
 
         // We create the binding only when the editor instance and Y.Doc are both available.
-        if (editorRef.current && activeDoc) {
+        if (editorRef.current && activeDoc && isDocPopulated ) {
+            console.log("%c[CodeEditor] Creating MonacoBinding WITH awareness object.", "color: green; font-weight: bold;");
+
             const yText = activeDoc.getText('monaco');
             const editorModel = editorRef.current.getModel();
 
@@ -25,6 +30,10 @@ export const CodeEditor = () => {
                 // Create the binding between the Yjs text and the editor model.
                 binding = new MonacoBinding(yText, editorModel, new Set([editorRef.current]));
             }
+        }
+        else {
+             //LOG to see if it's created WITHOUT awareness.
+            console.log("%c[CodeEditor] MonacoBinding created WITHOUT awareness object.", "color: orange;");
         }
         
         // This cleanup function is crucial. It runs when the component unmounts

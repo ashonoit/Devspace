@@ -11,15 +11,6 @@ const app = express();
 
 app.use(cookieParser());
 app.use(express.json());
-
-// const corsOptions = {
-//   origin: process.env.CLIENT_URI,
-//   credentials: true,
-// };
-
-// app.use(cors(corsOptions));
-// app.options(/^\/.*$/, cors(corsOptions));
-
 app.use(cors());
 
 app.get('/healthz', (req, res) => {

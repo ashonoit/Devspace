@@ -38,4 +38,4 @@ export function persistDoc(filePath: string, doc: Y.Doc, spaceId: string) {
     saveToB2(`spaces/${spaceId}`, filePath, text);
 }
 
-export const saveDebounced = debounce(persistDoc, 2000);
+export const saveDebounced = debounce(persistDoc, 3000);

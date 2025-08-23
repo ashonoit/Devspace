@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import { cn } from "../../lib/utils";
 import { DARK_CONTENT_BG } from "../../lib/constants";
-// import { Tools } from "./contents/Tools";
 import { Topbar } from "./contents/Topbar";
 import { CodingPage } from "./contents/CodingPage";
 import { ToggleProvider } from "./context/toggleContext";

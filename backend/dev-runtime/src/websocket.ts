@@ -152,6 +152,7 @@ function initHandlers(socket: Socket, spaceId: string, podId:string) {
 
     socket.on("joinFile", async (filePath: string) => {
         try{
+            console.log(`[${socket.id}] joining room: ${filePath}`);
             socket.join(filePath);
 
             const doc = await getYDoc(filePath);

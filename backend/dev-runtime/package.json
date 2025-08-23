@@ -27,6 +27,7 @@
     "socket.io": "^4.8.1",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.9.2",
+    "y-websocket": "^3.0.0",
     "yjs": "^13.6.27",
     "node-pty": "^1.0.0"
   },
