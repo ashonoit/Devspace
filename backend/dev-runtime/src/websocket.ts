@@ -184,6 +184,13 @@ function initHandlers(socket: Socket, spaceId: string, podId:string) {
         }
     });
 
+    socket.on("cursorChange", (data: { filePath: string, position: any, user: any }) => {
+        // Broadcast the cursor position to all other clients in the same file room.
+        // We use socket.to(room) which is equivalent to socket.broadcast.to(room) here,
+        // as the client-side logic should prevent a user from rendering their own cursor.
+        socket.to(data.filePath).emit("cursorUpdate", data);
+    });
+
     socket.on("requestTerminal", async () => {
         terminalManager.createPty(socket.id, spaceId, (data:string, id:number) => {
             socket.emit('terminal', {

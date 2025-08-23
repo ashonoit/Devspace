@@ -1,24 +1,28 @@
 
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Editor, { OnMount } from "@monaco-editor/react";
 import { useCodingContext } from "../context/codingContext";
 import { useAppSelector } from "../../../redux/reduxTypeSafety";
 import { MonacoBinding } from "y-monaco";
-import type * as monaco from 'monaco-editor';
+import  * as monaco from 'monaco-editor';
 import { useYjs } from "../../../hooks/useYjs";
 
+const currentUser = { id: `user_${Date.now()}`, name: "Alex" };
+
 export const CodeEditor = () => {
-    const { selectedFile, activeDoc, isDocPopulated} = useCodingContext();
+    const { selectedFile, activeDoc, isDocPopulated, socket} = useCodingContext();
     
     
     const theme = useAppSelector(state => state.theme.mode);
     const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
+    const [otherCursors, setOtherCursors] = useState<{ [userId: string]: monaco.IPosition }>({});
+    const decorationsCollectionRef = useRef<monaco.editor.IEditorDecorationsCollection | null>(null);
+
     // This useEffect hook is responsible for managing the binding lifecycle.
     useEffect(() => {
         let binding: MonacoBinding | null = null;
-
         // We create the binding only when the editor instance and Y.Doc are both available.
         if (editorRef.current && activeDoc && isDocPopulated ) {
             console.log("%c[CodeEditor] Creating MonacoBinding WITH awareness object.", "color: green; font-weight: bold;");
@@ -35,7 +39,6 @@ export const CodeEditor = () => {
              //LOG to see if it's created WITHOUT awareness.
             console.log("%c[CodeEditor] MonacoBinding created WITHOUT awareness object.", "color: orange;");
         }
-        
         // This cleanup function is crucial. It runs when the component unmounts
         // or when the dependencies change, ensuring no memory leaks.
         return () => {
@@ -46,7 +49,72 @@ export const CodeEditor = () => {
     // This callback runs when the Monaco editor has finished mounting.
     const handleEditorDidMount: OnMount = (editor) => {
         editorRef.current = editor;
+
+        {/* -------xxxxx-------For cursor awareness --------xxxxxx-------- */}
+        decorationsCollectionRef.current = editor.createDecorationsCollection();
+        let throttleTimeout: number | null = null;
+
+        const cursorListener = editor.onDidChangeCursorPosition(e=>{
+            if(throttleTimeout) return;
+
+            throttleTimeout = setTimeout(() => {
+                if(socket && selectedFile){
+                    const payload = {
+                        filePath: selectedFile.path,
+                        position: e.position,
+                        user: currentUser
+                    };
+                    // console.log("SENDING cursorChange:", payload);
+                    socket.emit("cursorChange", payload)
+                }
+
+                throttleTimeout = null;
+            }, 10);
+        })
+
+        return ()=>{
+            cursorListener.dispose();
+        }
+        {/* -------xxxxx-------For cursor awareness --------xxxxxx-------- */}
     };
+
+{/* -------*******-------For cursor awareness ---------*******----------- */}
+    useEffect(()=>{
+        if(!socket) return;
+
+        const handleCursorUpdate = (data:{filePath: string; position: monaco.IPosition; user: {id:string} }) =>{
+            if(data.filePath === selectedFile?.path && data.user.id !==currentUser.id){
+                setOtherCursors(prev => ({
+                    ...prev,
+                    [data.user.id]: data.position,
+                }));
+            }
+        }
+
+        socket.on("cursorUpdate", handleCursorUpdate);
+
+        return () => {
+            socket.off("cursorUpdate", handleCursorUpdate);
+        };
+    }, [socket, selectedFile?.path]);
+    
+
+    useEffect(()=>{
+        const collection = decorationsCollectionRef.current;
+        if (!collection) return;
+        
+        const newDecorations = Object.entries(otherCursors).map(([userId, position]) => ({
+            range: new monaco.Range(position.lineNumber, position.column, position.lineNumber, position.column),
+            options: {
+                className: 'other-user-cursor',
+            },
+        }));
+    
+        // Simply 'set' the new decorations. The collection handles the rest.
+        collection.set(newDecorations);
+    
+    },[otherCursors])
+{/* -------********--------For cursor awareness ----------**********---------- */}
     
     // Don't render anything if no file is selected.
     if (!selectedFile) {
@@ -59,6 +127,17 @@ export const CodeEditor = () => {
     else if (language === "ts" || language === "tsx") language = "typescript";
 
     return (
+        <>
+        {/* ---------------For cursor awareness -------------------- */}
+        <style>{`
+            .other-user-cursor {
+                border-left: 3px solid #2F539B; /* The vertical line for the cursor */
+                margin-left: -1px; /* Fine-tune position */
+                z-index: 10; /* Ensure it's visible on top */
+            }
+        `}</style>
+        {/* ---------------For cursor awareness -------------------- */}
+
         <Editor
             height="100vh"
             language={language}
@@ -69,6 +148,7 @@ export const CodeEditor = () => {
             // any stale state from the previously opened file.
             key={selectedFile.path}
         />
+        </>
     );
 };
 
